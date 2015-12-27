@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="483.0" prefWidth="657.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="veloundry.MainController">
+    
+    <children>
+      <ImageView fitHeight="483.0" fitWidth="671.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@Icon/Backgorund.jpg" />
+         </image>
+      </ImageView>
+      <TabPane fx:id="tabMain" layoutX="-1.0" layoutY="93.0" prefHeight="383.0" prefWidth="659.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="100.0" tabMaxWidth="90.0" tabMinHeight="100.0">
+        <stylesheets>
+            <URL value="@main.css" />
+        </stylesheets>
+        <tabs>
+          <Tab fx:id="TabAmbil" closable="false" onSelectionChanged="#TabChanged" text="Ambil Loundry">
+            <graphic>
+                <javafx.scene.image.ImageView fitHeight="70.0" fitWidth="72.0" rotate="-65.0">
+                    <image>
+                        <javafx.scene.image.Image fx:id="icon" url="@Icon/AmbilLoundry.png" />
+                    </image>
+                </javafx.scene.image.ImageView>
+            </graphic>
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="356.0" prefWidth="588.0" style="-fx-background-color: #FAFAFA;">
+                     <children>
+                        <Button fx:id="btntest1" layoutX="349.0" layoutY="294.0" mnemonicParsing="false" onMouseClicked="#btn1Click" prefHeight="60.0" prefWidth="178.0" text="Kirim Permintaan">
+                           <graphic>
+                              <ImageView fitHeight="52.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Icon/order.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <ImageView fitHeight="114.0" fitWidth="116.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
+                           <image>
+                              <Image url="@Icon/AmbilLoundry.png" />
+                           </image>
+                        </ImageView>
+                        <Label layoutX="139.0" layoutY="36.0" prefHeight="35.0" prefWidth="180.0" text="Ambil Laundry">
+                           <font>
+                              <Font name="System Bold" size="24.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="139.0" layoutY="66.0" prefHeight="24.0" prefWidth="272.0" text="Layanan ambil laundry langsung di rumah Anda." />
+                        <TextArea layoutX="125.0" layoutY="174.0" prefHeight="36.0" prefWidth="408.0" />
+                        <TextField layoutX="125.0" layoutY="138.0" />
+                        <TextField layoutX="125.0" layoutY="220.0" />
+                        <ComboBox fx:id="cbJenisCucian" layoutX="125.0" layoutY="257.0" prefWidth="150.0" />
+                        <DatePicker fx:id="tglAmbil" editable="false" layoutX="125.0" layoutY="312.0" />
+                        <DatePicker fx:id="tglAntar" editable="false" layoutX="125.0" layoutY="342.0" />
+                        <Label layoutX="25.0" layoutY="142.0" text="Nama Lengkap" />
+                        <Label layoutX="25.0" layoutY="183.0" text="Alamat Lengkap" />
+                        <Label layoutX="25.0" layoutY="224.0" text="Nomor HP" />
+                        <Label layoutX="25.0" layoutY="261.0" text="Jenis Cucian" />
+                        <Label layoutX="25.0" layoutY="294.0" text="Opsional">
+                           <font>
+                              <Font name="System Bold Italic" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="39.0" layoutY="316.0" text="Tanggal Ambil" />
+                        <Label layoutX="39.0" layoutY="346.0" text="Tanggal Antar" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+          <Tab fx:id="TabAntar" closable="false" onSelectionChanged="#TabChanged" text="Antar Loundry">
+              <graphic>
+                <javafx.scene.image.ImageView fitHeight="60.0" fitWidth="59.0" rotate="-65.0">
+                    <image>
+                        <javafx.scene.image.Image url="@Icon/Antar.png" />
+                    </image>
+                </javafx.scene.image.ImageView>
+            </graphic>
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #FAFAFA;">
+                     <children>
+                        <Label layoutX="136.0" layoutY="64.0" prefHeight="24.0" prefWidth="272.0" text="Layanan antar laundry langsung ke rumah Anda." />
+                        <Label layoutX="136.0" layoutY="35.0" prefHeight="35.0" prefWidth="180.0" text="Antar Laundry">
+                           <font>
+                              <Font name="System Bold" size="24.0" />
+                           </font>
+                        </Label>
+                        <ImageView fitHeight="110.0" fitWidth="107.0" layoutX="21.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
+                           <image>
+                              <Image url="@Icon/Antar.png" />
+                           </image>
+                        </ImageView>
+                        <TextField layoutX="131.0" layoutY="139.0" />
+                        <ProgressIndicator layoutX="294.0" layoutY="132.0" progress="0.0" />
+                        <Label layoutX="21.0" layoutY="143.0" text="ID Pesanan Loundry" />
+                        <SplitPane dividerPositions="0.22986247544204322" layoutX="21.0" layoutY="208.0" prefHeight="172.0" prefWidth="511.0">
+                          <items>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="158.0" prefWidth="168.0">
+                                 <children>
+                                    <ListView fx:id="lvStatusKategori" layoutX="-34.0" layoutY="-15.0" prefHeight="158.0" prefWidth="132.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                                 <children>
+                                    <ListView fx:id="lvStatus" layoutX="36.0" layoutY="-30.0" prefHeight="158.0" prefWidth="371.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                          </items>
+                        </SplitPane>
+                        <Label layoutX="21.0" layoutY="183.0" text="Informasi">
+                           <font>
+                              <Font name="System Bold Italic" size="12.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="btntest11" layoutX="354.0" layoutY="122.0" mnemonicParsing="false" onMouseClicked="#btn1Click" prefHeight="60.0" prefWidth="178.0" text="Cek Laundry">
+                           <graphic>
+                              <ImageView fitHeight="52.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Icon/order.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Label layoutX="131.0" layoutY="183.0" text="Status :" />
+                        <Label fx:id="lblStatus" layoutX="176.0" layoutY="183.0" text="Nothing" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+            <Tab onSelectionChanged="#TabChanged" text="Daftar Harga">
+                <graphic>
+                    <javafx.scene.image.ImageView fitHeight="57.0" fitWidth="56.0" rotate="-65.0">
+                        <image>
+                            <javafx.scene.image.Image url="@Icon/daftar.png" />
+                        </image>
+                    </javafx.scene.image.ImageView>
+                </graphic>
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #FAFAFA;">
+                     <children>
+                        <Pane layoutX="14.0" layoutY="14.0" prefHeight="179.0" prefWidth="163.0" style="-fx-background-color: #ffffff;">
+                           <children>
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#3191eb00" height="180.0" stroke="#87cae0" strokeType="INSIDE" strokeWidth="4.0" width="164.0" />
+                              <Label alignment="CENTER" layoutX="14.0" layoutY="11.0" prefHeight="23.0" prefWidth="141.0" text="Cuci Basah">
+                                 <font>
+                                    <Font size="27.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fitHeight="83.0" fitWidth="116.0" layoutX="25.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Icon/wetaundry.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Button layoutX="99.0" layoutY="145.0" mnemonicParsing="false" text="Rincian" />
+                              <Label alignment="CENTER" layoutX="14.0" layoutY="130.0" prefHeight="30.0" prefWidth="84.0" text="Rp 2000/kg" />
+                           </children>
+                        </Pane>
+                        <Pane layoutX="14.0" layoutY="201.0" prefHeight="176.0" prefWidth="200.0" style="-fx-background-color: #ffffff;">
+                           <children>
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#3191eb00" height="176.0" stroke="#87cae0" strokeType="INSIDE" strokeWidth="4.0" width="200.0" />
+                              <Label alignment="CENTER" layoutX="14.0" layoutY="7.0" prefHeight="27.0" prefWidth="172.0" text="Cuci Kering">
+                                 <font>
+                                    <Font size="27.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fitHeight="83.0" fitWidth="128.0" layoutX="38.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Icon/drylaundry.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Button layoutX="132.0" layoutY="140.0" mnemonicParsing="false" text="Rincian" />
+                              <Label alignment="CENTER" layoutX="14.0" layoutY="127.0" prefHeight="39.0" prefWidth="113.0" text="Rp 2500/kg">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
+                        <Pane layoutX="194.0" layoutY="16.0" prefHeight="176.0" prefWidth="200.0" style="-fx-background-color: #ffffff;">
+                           <children>
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#3191eb00" height="176.0" stroke="#87cae0" strokeType="INSIDE" strokeWidth="4.0" width="200.0" />
+                              <Label alignment="CENTER" layoutX="14.0" layoutY="7.0" prefHeight="27.0" prefWidth="172.0" text="Cuci Setrika">
+                                 <font>
+                                    <Font size="27.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fitHeight="83.0" fitWidth="128.0" layoutX="38.0" layoutY="46.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Icon/cuciSetrika.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Button layoutX="132.0" layoutY="140.0" mnemonicParsing="false" text="Rincian" />
+                              <Label alignment="CENTER" layoutX="14.0" layoutY="127.0" prefHeight="39.0" prefWidth="113.0" text="Rp 3000/kg">
+                                 <font>
+                                    <Font size="17.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
+                        <Pane layoutX="231.0" layoutY="200.0" prefHeight="179.0" prefWidth="163.0" style="-fx-background-color: #ffffff;">
+                           <children>
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#3191eb00" height="180.0" stroke="#87cae0" strokeType="INSIDE" strokeWidth="4.0" width="164.0" />
+                              <Label alignment="CENTER" layoutX="14.0" layoutY="11.0" prefHeight="23.0" prefWidth="141.0" text="Cuci Boneka">
+                                 <font>
+                                    <Font size="25.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fitHeight="83.0" fitWidth="116.0" layoutX="25.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Icon/cuciboneka.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Button layoutX="99.0" layoutY="145.0" mnemonicParsing="false" text="Rincian" />
+                              <Label alignment="CENTER" layoutX="14.0" layoutY="130.0" prefHeight="30.0" prefWidth="84.0" text="Rp10000/item" />
+                           </children>
+                        </Pane>
+                        <Pane layoutX="398.0" layoutY="51.0" prefHeight="272.0" prefWidth="140.0" style="-fx-background-color: #ffffff;">
+                           <children>
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#3191eb00" height="272.0" stroke="#87cae0" strokeType="INSIDE" strokeWidth="4.0" width="140.0" />
+                              <Label alignment="CENTER" layoutY="8.0" prefHeight="23.0" prefWidth="141.0" text="Cuci Gorden/Sprei">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fitHeight="176.0" fitWidth="137.0" layoutX="11.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Icon/gorden.jpg" />
+                                 </image>
+                              </ImageView>
+                              <Button layoutX="73.0" layoutY="236.0" mnemonicParsing="false" text="Rincian" />
+                              <Label alignment="CENTER" layoutX="12.0" layoutY="206.0" prefHeight="30.0" prefWidth="84.0" text="Rp 15000/kg" />
+                           </children>
+                        </Pane>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Untitled Tab">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="83.0" layoutX="4.0" layoutY="375.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="100.0" />
+      <Label layoutX="6.0" layoutY="412.0" prefHeight="17.0" prefWidth="100.0" text="Copyright © 2015" wrapText="true" />
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="6.0" layoutY="430.0" prefHeight="17.0" prefWidth="100.0" text="By Essensift" textAlignment="CENTER" />
+      <ImageView fitHeight="17.0" fitWidth="91.0" layoutX="11.0" layoutY="387.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@Icon/elogo.png" />
+         </image>
+      </ImageView>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="76.0" layoutX="6.0" layoutY="383.0" onMouseClicked="#About_Click" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="100.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Rectangle>
+      <Pane fx:id="paneAbout" layoutX="106.0" layoutY="94.0" prefHeight="383.0" prefWidth="552.0" style="-fx-background-color: #FAFAFA;" visible="false">
+         <children>
+            <TabPane fx:id="tabAbout" prefHeight="383.0" prefWidth="552.0" stylesheets="@default.css" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Tentang Aplikasi">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <ImageView fitHeight="65.0" fitWidth="205.0" layoutX="26.0" layoutY="298.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Icon/elogo1.png" />
+                                 </image>
+                              </ImageView>
+                              <ImageView fitHeight="99.0" fitWidth="100.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@Icon/essensift1.png" />
+                                 </image>
+                              </ImageView>
+                              <Label layoutX="109.0" layoutY="25.0" prefHeight="37.0" prefWidth="149.0" text="Bo Laundry">
+                                 <font>
+                                    <Font name="Arial Bold" size="25.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="113.0" layoutY="58.0" prefHeight="17.0" prefWidth="158.0" text="ver. 1.0.273 - The spirit of Bo" />
+                              <Label layoutX="113.0" layoutY="75.0" prefHeight="20.0" prefWidth="204.0" text="Copyright © 2015 by Essensift">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="14.0" layoutY="271.0" prefHeight="20.0" prefWidth="204.0" text="Developed by :">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                           </children></AnchorPane>
+                  </content>
+                </Tab>
+                <Tab text="OpenSource">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <Label layoutX="35.0" layoutY="25.0" prefHeight="24.0" prefWidth="378.0" text="There is no OpenSource code used in this program version." />
+                           </children></AnchorPane>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+         </children>
+      </Pane>
+      <Label layoutX="610.0" layoutY="76.0" text="Tentang" textFill="WHITE">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label layoutX="568.0" layoutY="76.0" text="Login" textFill="WHITE">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

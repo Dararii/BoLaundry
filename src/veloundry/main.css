@@ -1,0 +1,40 @@
+
+#pane{
+    -fx-background-image: url("Icon/Backgorund1.jpg");
+    -fx-background-repeat: stretch;   
+    -fx-background-position: center center;
+    -fx-background-size: cover;
+    
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.tab{
+    -fx-background-insets: 0 1 0 1,0,0;
+}
+.tab-pane .tab
+{
+    -fx-background-color: #e6e6e6;
+
+}
+
+.tab-pane .tab:selected
+{
+    -fx-background-color: #4FC3F7;
+}
+
+.tab .tab-label { 
+    -fx-content-display: top;
+    -fx-rotate: 90;
+    -fx-alignment: CENTER;
+    -fx-text-fill: #828282;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.tab:selected .tab-label { 
+    -fx-alignment: CENTER;
+    -fx-text-fill: #E1F5FE;
+}
