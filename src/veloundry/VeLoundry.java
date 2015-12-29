@@ -5,13 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-/**@author Darari
- */
+/**@author Darari*/
 public class VeLoundry extends Application {
-    
-    
-    
+
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
@@ -19,7 +15,7 @@ public class VeLoundry extends Application {
         //root.getStylesheets().add(this.getClass().getResource("main.css").toExt‌​ernalForm());
         
         Scene scene = new Scene(root);
-        stage.setTitle("VeLoundry");
+        stage.setTitle("Bo Loundry");
         stage.setWidth(672);
         stage.setHeight(510);
         stage.setResizable(false);

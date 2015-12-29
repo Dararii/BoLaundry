@@ -35,7 +35,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="356.0" prefWidth="588.0" style="-fx-background-color: #FAFAFA;">
                      <children>
-                        <Button fx:id="btntest1" layoutX="349.0" layoutY="294.0" mnemonicParsing="false" onMouseClicked="#btn1Click" prefHeight="60.0" prefWidth="178.0" text="Kirim Permintaan">
+                        <Button fx:id="btnSendReq" layoutX="349.0" layoutY="294.0" mnemonicParsing="false" onMouseClicked="#btnSendClick" prefHeight="60.0" prefWidth="178.0" text="Kirim Permintaan">
                            <graphic>
                               <ImageView fitHeight="52.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -55,12 +55,12 @@
                            </font>
                         </Label>
                         <Label layoutX="139.0" layoutY="66.0" prefHeight="24.0" prefWidth="272.0" text="Layanan ambil laundry langsung di rumah Anda." />
-                        <TextArea layoutX="125.0" layoutY="174.0" prefHeight="36.0" prefWidth="408.0" />
-                        <TextField layoutX="125.0" layoutY="138.0" />
-                        <TextField layoutX="125.0" layoutY="220.0" />
+                        <TextArea fx:id="txtAlamat" layoutX="125.0" layoutY="174.0" prefHeight="36.0" prefWidth="408.0" />
+                        <TextField fx:id="txtName" layoutX="125.0" layoutY="138.0" />
+                        <TextField fx:id="txtHP" layoutX="125.0" layoutY="220.0" />
                         <ComboBox fx:id="cbJenisCucian" layoutX="125.0" layoutY="257.0" prefWidth="150.0" />
-                        <DatePicker fx:id="tglAmbil" editable="false" layoutX="125.0" layoutY="312.0" />
-                        <DatePicker fx:id="tglAntar" editable="false" layoutX="125.0" layoutY="342.0" />
+                        <DatePicker fx:id="dpTglAmbil" editable="false" layoutX="125.0" layoutY="312.0" />
+                        <DatePicker fx:id="dpTglAntar" editable="false" layoutX="125.0" layoutY="342.0" />
                         <Label layoutX="25.0" layoutY="142.0" text="Nama Lengkap" />
                         <Label layoutX="25.0" layoutY="183.0" text="Alamat Lengkap" />
                         <Label layoutX="25.0" layoutY="224.0" text="Nomor HP" />
