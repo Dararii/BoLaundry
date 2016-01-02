@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 /**@author Darari*/
 public class DBManagement {
-    DateManagement dm = new DateManagement();
     public ArrayList BacaFile(String namafile){
         ArrayList tmp = new ArrayList();
         BufferedReader br = null;
@@ -48,6 +47,31 @@ public class DBManagement {
                 while(iter.hasNext()){
                     writer.println(iter.next());
                 }
+                writer.close();
+                return true;
+            }
+            catch(IOException e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+    }
+    public boolean TulisFile(String namafile, String konten, boolean isCreateNewFile){
+        if (isCreateNewFile){
+            try{
+                PrintWriter writer = new PrintWriter(namafile, "UTF-8");
+                writer.println(konten);
+                writer.close();
+                return true;
+            }
+            catch(IOException e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+        else{
+            try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(namafile, true)))){
+                writer.println(konten);
                 writer.close();
                 return true;
             }

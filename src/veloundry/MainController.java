@@ -1,11 +1,20 @@
 package veloundry;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -15,7 +24,11 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
+import veloundry.Engine.BoEngine;
+import veloundry.Engine.DBManagement;
+import veloundry.Engine.DateManagement;
 
 /**
  * FXML Controller class
@@ -53,11 +66,16 @@ public class MainController implements Initializable {
     
             
     private SingleSelectionModel<Tab> selectionModel;
+    private SingleSelectionModel<ComboBox> cbSM;
+    BoEngine useEngine = new BoEngine();
+    DateManagement dateman = new DateManagement();
+    DBManagement dbms = new DBManagement();
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //btntest.setContentDisplay(ContentDisplay.TOP);
-        selectionModel = tabMain.getSelectionModel();
+        txtName.addEventFilter(KeyEvent.KEY_TYPED, letter_Validation(32));
+        txtHP.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(12));
         
         ObservableList<String> items =FXCollections.observableArrayList (
         "Nama (LID)", "Alamat", "Jenis Cucian", "Berat Cucian", "Tanggal Ambil",
@@ -67,6 +85,8 @@ public class MainController implements Initializable {
                 "Cuci Gorden/Sprei");
         cbJenisCucian.setItems(jenisCuci);
         lvStatusKategori.setItems(items);
+        selectionModel = tabMain.getSelectionModel();
+        cbSM = cbJenisCucian.getSelectionModel();
     }    
     
     public void About_Click(){
@@ -82,8 +102,105 @@ public class MainController implements Initializable {
         }
     }
     public void btnSendClick(){
-        //tabMain.setVisible(false);
-        //txtName.getText()
+        String nama, alamat, hp, jenis;
+        LocalDate ld1, ld2;
+        Date date1, date2;
+        nama  = txtName.getText();
+        alamat = txtAlamat.getText();
+        hp = txtHP.getText();
+        jenis =(String) cbJenisCucian.getValue();
+        ld1 = dpTglAmbil.getValue();
+        ld2 = dpTglAntar.getValue();        
+        if (nama != null && alamat != null && hp != null && jenis != null){
+            if (ld1 != null && ld2 != null){
+                date1 = dateman.CreateDateFromLocaDate(ld1);
+                date2 = dateman.CreateDateFromLocaDate(ld2);
+                boolean a = dateman.CekIsDateNewer(date1, date2);
+                if (!a) {
+                    ShowDialog("Information", "Tolong periksa lagi tanggal ambil dan antar", AlertType.INFORMATION);
+                } else{
+                    boolean b;
+                    b = useEngine.AddNewOrder(nama, alamat, hp, jenis, dateman.CreateStringFormDate(date1), dateman.CreateStringFormDate(date2));
+                    if (b) {
+                        ShowDialog("Information", useEngine.getMessage(), AlertType.INFORMATION);
+                        ResetForm();
+                    } else {
+                        ShowDialog("Information", useEngine.getMessage(), AlertType.INFORMATION);
+                    }
+                }
+            }
+            else {
+                Date zz = new Date();
+                Calendar c = Calendar.getInstance(); 
+                c.setTime(zz); 
+                c.add(Calendar.DATE, 1);
+                zz = c.getTime();
+                boolean b;
+                b = useEngine.AddNewOrder(nama, alamat, hp, jenis, dateman.GetCurrentDate(), dateman.CreateStringFormDate(zz));
+                if (b) {
+                    ShowDialog("Information", useEngine.getMessage(), AlertType.INFORMATION);
+                    ResetForm();
+                } else {
+                    ShowDialog("Information", useEngine.getMessage(), AlertType.INFORMATION);
+                }
+            }
+        }
+        else{
+            ShowDialog("Information", "Tolong isi data dengan lengkap", AlertType.INFORMATION);
+        }
+    }
+    public void ResetForm(){
+        txtName.clear();
+        txtAlamat.clear();
+        txtHP.clear();
+        cbSM.clearSelection();
+        dpTglAmbil.setValue(null);
+        dpTglAntar.setValue(null);
     }
     
+    public void ShowDialog(String tittle, String message, AlertType a){
+        Alert alert = new Alert(a);
+        alert.setTitle(tittle);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    
+    /* Numeric Validation Limit the  characters to maxLengh AND to ONLY DigitS*/
+    public EventHandler<KeyEvent> numeric_Validation(final Integer max_Lengh) {
+        return new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent e) {
+                TextField txt_TextField = (TextField) e.getSource();                
+                if (txt_TextField.getText().length() >= max_Lengh) {                    
+                    e.consume();
+                }
+                if(e.getCharacter().matches("[0-9.]")){ 
+                    if(txt_TextField.getText().contains(".") && e.getCharacter().matches("[.]")){
+                        e.consume();
+                    }else if(txt_TextField.getText().length() == 0 && e.getCharacter().matches("[.]")){
+                        e.consume(); 
+                    }
+                }else{
+                    e.consume();
+                }
+            }
+        };
+    }    
+    /* Letters Validation Limit the  characters to maxLengh AND to ONLY Letters */
+    public EventHandler<KeyEvent> letter_Validation(final Integer max_Lengh) {
+        return new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent e) {
+                TextField txt_TextField = (TextField) e.getSource();                
+                if (txt_TextField.getText().length() >= max_Lengh) {                    
+                    e.consume();
+                }
+                if(e.getCharacter().matches("[A-Za-z]") || e.getCharacter().matches(" ")){ 
+                }else{
+                    e.consume();
+                }
+            }
+        };
+    } 
 }

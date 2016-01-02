@@ -1,4 +1,6 @@
 package veloundry.Engine;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -11,11 +13,15 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
+
 /**
+ *
  * @author Darari
  */
 public class Connection {
-    private String message;
+    public String message;
 
     public boolean CekInetConnection(String urlHOST){
         boolean state = false;
@@ -43,11 +49,11 @@ public class Connection {
     }
     
     //FTP base upload file
-    public boolean UploadFile(String filename, String host, String username, String pass){
+    public boolean UploadFile(String filename, String dirnamewithSlash, String host, String username, String pass){
         boolean state = false;
         String ftpUrl = "ftp://%s:%s@%s/%s;type=i";
         String filePath = filename;
-        String uploadPath = "/" + filename;
+        String uploadPath = "/" + dirnamewithSlash + filename;
 
         ftpUrl = String.format(ftpUrl, username, pass, host, uploadPath);
         setMessage("Upload URL: " + ftpUrl);
@@ -103,6 +109,49 @@ public class Connection {
             }
         }
         return state;
+    }
+    
+    public boolean CreateDirOnServer(String dirname, String host, String username, String pass){
+        String server = host;
+        int port = 21;
+        FTPClient ftpClient = new FTPClient();
+        try {
+            ftpClient.connect(server, port);
+            showServerReply(ftpClient);
+            int replyCode = ftpClient.getReplyCode();
+            if (!FTPReply.isPositiveCompletion(replyCode)) {
+                setMessage("Operation failed. Server reply code: " + replyCode);
+            }
+            boolean success = ftpClient.login(username, pass);
+            showServerReply(ftpClient);
+            if (!success) {
+                setMessage("Could not login to the server");
+            }
+            // Creates a directory
+            String dirToCreate = "/" + dirname;
+            success = ftpClient.makeDirectory(dirToCreate);
+            showServerReply(ftpClient);
+            if (success) {
+                setMessage("Successfully created directory: " + dirToCreate);
+            } else {
+                setMessage("Failed to create directory. See server's reply.");
+            }
+            // logs out
+            ftpClient.logout();
+            ftpClient.disconnect();
+            return true;
+        } catch (IOException ex) {
+            setMessage("Oops! Something wrong happened\n" + ex.getMessage());
+            return false;
+        }
+    }
+    
+    private String[] showServerReply(FTPClient ftpClient) {
+        String[] replies = ftpClient.getReplyStrings();
+        if (replies != null && replies.length > 0) {
+            setMessage("Null");
+        }
+        return replies;
     }
     
     public String getMessage() {

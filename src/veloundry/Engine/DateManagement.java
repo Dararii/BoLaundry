@@ -3,6 +3,10 @@ package veloundry.Engine;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -17,6 +21,10 @@ public class DateManagement {
     public String GetCurrentDate(){
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         Date date = new Date();
+        return (dateFormat.format(date)); //2014/08/06 15:59:48
+    }
+    public String CreateStringFormDate(Date date){
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         return (dateFormat.format(date)); //2014/08/06 15:59:48
     }
     public String GetMostRecentTime(String date1, String date2){
@@ -47,10 +55,10 @@ public class DateManagement {
     
     public boolean CekIsDateNewer(Date date1, Date date2){
         if(date1.before(date2)){
-            return false;
+            return true;
         }
         else if (date1.after(date2)){
-            return true;
+            return false;
         }
         else {
             return false;
@@ -69,6 +77,24 @@ public class DateManagement {
         finally{
             return tgl;
         }
+    }
+    
+    public Date CreateDateFromLocaDate(LocalDate ld1){
+        Date date1;
+        Instant instant = ld1.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+        date1 = Date.from(instant);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date1);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        String currentdate =  sdf.format(cal.getTime());
+        int hh = Integer.parseInt(currentdate.split(":")[0]);
+        int mm = Integer.parseInt(currentdate.split(":")[1]);
+        calendar .add(Calendar.HOUR_OF_DAY, hh);
+        calendar .add(Calendar.MINUTE, mm);
+        date1 = calendar.getTime();
+        return date1;
     }
 
     public String getMessage() {
