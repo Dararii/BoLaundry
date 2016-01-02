@@ -2,6 +2,7 @@ package veloundry;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -21,6 +22,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -34,6 +36,8 @@ import veloundry.Engine.BoEngine;
 import veloundry.Engine.Connection;
 import veloundry.Engine.DBManagement;
 import veloundry.Engine.DateManagement;
+import veloundry.Engine.Member;
+import veloundry.Engine.Order;
 
 /**
  * FXML Controller class
@@ -53,6 +57,10 @@ public class MainController implements Initializable {
     @FXML
     private TextField txtName;
     @FXML
+    private TextField txtUserName;
+    @FXML
+    private PasswordField txtUserPass;
+    @FXML
     private TextArea txtAlamat;
     @FXML
     private DatePicker dpTglAntar;
@@ -60,6 +68,8 @@ public class MainController implements Initializable {
     private DatePicker dpTglAmbil;
     @FXML
     private TabPane tabMain;
+    @FXML
+    private TabPane tabMain1;
     @FXML
     private TabPane tabAbout;
     @FXML
@@ -73,6 +83,8 @@ public class MainController implements Initializable {
     @FXML
     private Label lblnotifstatus;
     @FXML
+    private Label lblLogin;
+    @FXML
     private Pane paneAbout;
     @FXML
     private ComboBox cbJenisCucian;
@@ -81,12 +93,18 @@ public class MainController implements Initializable {
     
             
     private SingleSelectionModel<Tab> selectionModel;
+    private SingleSelectionModel<Tab> selectionModel1;
     private SingleSelectionModel<ComboBox> cbSM;
-    Connection con = new Connection();
-    BoEngine useEngine = new BoEngine();
-    DateManagement dateman = new DateManagement();
-    DBManagement dbms = new DBManagement();
-    Timer timer = new java.util.Timer();
+    
+    private boolean isAdmin = false;
+    private ArrayList userpass = new ArrayList();
+    
+    private final Connection con = new Connection();
+    private final BoEngine useEngine = new BoEngine();
+    private final DateManagement dateman = new DateManagement();
+    private final DBManagement dbms = new DBManagement();
+    private Member member = new Member();
+    private final Timer timer = new java.util.Timer();
             
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -103,7 +121,15 @@ public class MainController implements Initializable {
         cbJenisCucian.setItems(jenisCuci);
         lvStatusKategori.setItems(items);
         selectionModel = tabMain.getSelectionModel();
+        selectionModel1 = tabMain1.getSelectionModel();
         cbSM = cbJenisCucian.getSelectionModel();
+        
+        if (this.dbms.CheckFileExist("user.txt") == true){
+            this.userpass = this.dbms.BacaFile("user.txt");
+        }
+        else {
+            this.dbms.TulisFile("user.txt", "",true);
+        }
         
         timer.schedule(new TimerTask() {
             public void run() {
@@ -119,11 +145,13 @@ public class MainController implements Initializable {
     
     public void About_Click(){
         selectionModel.select(3);
+        selectionModel1.select(3);
         paneAbout.setVisible(true);
     }
     public void TabChanged(){
-        int a  = selectionModel.getSelectedIndex();
-        if (a!= 3) {
+        int a = selectionModel.getSelectedIndex();
+        int b = selectionModel1.getSelectedIndex();
+        if (a!= 3 || b != 3) {
             paneAbout.setVisible(false);
         } else {
             paneAbout.setVisible(true);
@@ -178,15 +206,50 @@ public class MainController implements Initializable {
         }
     }
     public void LoginCLicked(){
-        
+        //ShowDialog("aa", userpass.toString(),AlertType.INFORMATION);
+        String username, pass;
+        username = txtUserName.getText();
+        pass = txtUserPass.getText();
+        this.isAdmin = member.AdminLogin(username, pass, userpass);
+        if (this.isAdmin){
+            apAdminMain.setVisible(true);
+            apUserMain.setVisible(false);
+            apLoginForm.setVisible(false);
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(800), apAdminMain);
+            fadeTransition.setFromValue(0.0);
+            fadeTransition.setToValue(1.0);
+            fadeTransition.play();
+            lblLogin.setText("Keluar");
+            txtUserName.clear();
+            txtUserPass.clear();
+            TabChanged();
+            //ShowDialog("Login Information", member.getMessage(),AlertType.INFORMATION);
+        } else{
+            ShowDialog("Login Information", member.getMessage(),AlertType.INFORMATION);
+        }
     }
     public void ShowLoginForm(){
-        apUserMain.setVisible(false);
-        apLoginForm.setVisible(true);
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(800), apLoginForm);
-        fadeTransition.setFromValue(0.0);
-        fadeTransition.setToValue(1.0);
-        fadeTransition.play();
+        String a = lblLogin.getText();
+        if(a.equalsIgnoreCase("keluar")){
+            this.isAdmin = false;
+            lblLogin.setText("Masuk");
+            apAdminMain.setVisible(false);
+            apUserMain.setVisible(true);
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(800), apUserMain);
+            fadeTransition.setFromValue(0.0);
+            fadeTransition.setToValue(1.0);
+            fadeTransition.play();
+            apLoginForm.setVisible(false);
+        } else{
+            paneAbout.setVisible(false);
+            apAdminMain.setVisible(false);
+            apUserMain.setVisible(false);
+            apLoginForm.setVisible(true);
+            FadeTransition fadeTransition = new FadeTransition(Duration.millis(800), apLoginForm);
+            fadeTransition.setFromValue(0.0);
+            fadeTransition.setToValue(1.0);
+            fadeTransition.play();
+        }
     }
     public void BackFromLoginForm(){
         apUserMain.setVisible(true);
@@ -195,8 +258,9 @@ public class MainController implements Initializable {
         fadeTransition.setToValue(1.0);
         fadeTransition.play();
         apLoginForm.setVisible(false);
-        
+        TabChanged();
     }
+    
     public void ResetForm(){
         txtName.clear();
         txtAlamat.clear();
