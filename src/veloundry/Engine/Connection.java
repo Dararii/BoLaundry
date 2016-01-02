@@ -26,23 +26,17 @@ public class Connection {
     public boolean CekInetConnection(String urlHOST){
         boolean state = false;
         try {
-            try {
-                URL url = new URL(urlHOST);
-                setMessage("Connecting to " + url.getHost());
-                HttpURLConnection con = (HttpURLConnection) url
-                                .openConnection();
-                con.connect();
-                if (con.getResponseCode() == 200){
-                        setMessage("Connection established!!");
-                }
-                state = true;
-            } catch (Exception exception) {
-                setMessage("No Connection");
-                state = false;
+            URL url = new URL(urlHOST);
+            //setMessage("Connecting to " + url.getHost());
+            HttpURLConnection con = (HttpURLConnection) url
+                            .openConnection();
+            con.connect();
+            if (con.getResponseCode() == 200){
+                setMessage("Status : Connected with Server");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            setMessage(e.getMessage());
+            state = true;
+        } catch (Exception exception) {
+            setMessage("Status : Disconnected from Server");
             state = false;
         }
         return state;

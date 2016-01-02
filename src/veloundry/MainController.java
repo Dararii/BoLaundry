@@ -1,13 +1,14 @@
 package veloundry;
 
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -18,6 +19,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
@@ -25,8 +27,11 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 import veloundry.Engine.BoEngine;
+import veloundry.Engine.Connection;
 import veloundry.Engine.DBManagement;
 import veloundry.Engine.DateManagement;
 
@@ -37,6 +42,12 @@ import veloundry.Engine.DateManagement;
  */
 public class MainController implements Initializable {
 
+    @FXML
+    private AnchorPane apUserMain;
+    @FXML
+    private AnchorPane apAdminMain;
+    @FXML
+    private AnchorPane apLoginForm;
     @FXML
     private TextField txtHP;
     @FXML
@@ -58,6 +69,10 @@ public class MainController implements Initializable {
     @FXML
     private Button btnSendReq;
     @FXML
+    private Button btnLogin;
+    @FXML
+    private Label lblnotifstatus;
+    @FXML
     private Pane paneAbout;
     @FXML
     private ComboBox cbJenisCucian;
@@ -67,10 +82,12 @@ public class MainController implements Initializable {
             
     private SingleSelectionModel<Tab> selectionModel;
     private SingleSelectionModel<ComboBox> cbSM;
+    Connection con = new Connection();
     BoEngine useEngine = new BoEngine();
     DateManagement dateman = new DateManagement();
     DBManagement dbms = new DBManagement();
-    
+    Timer timer = new java.util.Timer();
+            
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //btntest.setContentDisplay(ContentDisplay.TOP);
@@ -87,6 +104,17 @@ public class MainController implements Initializable {
         lvStatusKategori.setItems(items);
         selectionModel = tabMain.getSelectionModel();
         cbSM = cbJenisCucian.getSelectionModel();
+        
+        timer.schedule(new TimerTask() {
+            public void run() {
+                 Platform.runLater(new Runnable() {
+                    public void run() {
+                        con.CekInetConnection("http://albc.ucoz.com");
+                        lblnotifstatus.setText(con.getMessage());
+                    }
+                });
+            }
+        }, 0, 15000);
     }    
     
     public void About_Click(){
@@ -148,6 +176,26 @@ public class MainController implements Initializable {
         else{
             ShowDialog("Information", "Tolong isi data dengan lengkap", AlertType.INFORMATION);
         }
+    }
+    public void LoginCLicked(){
+        
+    }
+    public void ShowLoginForm(){
+        apUserMain.setVisible(false);
+        apLoginForm.setVisible(true);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(800), apLoginForm);
+        fadeTransition.setFromValue(0.0);
+        fadeTransition.setToValue(1.0);
+        fadeTransition.play();
+    }
+    public void BackFromLoginForm(){
+        apUserMain.setVisible(true);
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(800), apUserMain);
+        fadeTransition.setFromValue(0.0);
+        fadeTransition.setToValue(1.0);
+        fadeTransition.play();
+        apLoginForm.setVisible(false);
+        
     }
     public void ResetForm(){
         txtName.clear();
