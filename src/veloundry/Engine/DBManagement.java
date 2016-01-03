@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.ListIterator;
+import javafx.collections.ObservableList;
 /**@author Darari*/
 public class DBManagement {
     public ArrayList BacaFile(String namafile){
@@ -26,6 +27,37 @@ public class DBManagement {
         return tmp;
     }
     public boolean TulisFile(String namafile, ArrayList konten, boolean isCreateNewFile){
+        if (isCreateNewFile){
+            try{
+                PrintWriter writer = new PrintWriter(namafile, "UTF-8");
+                ListIterator iter = konten.listIterator();
+                while(iter.hasNext()){
+                    writer.println(iter.next());
+                }
+                writer.close();
+                return true;
+            }
+            catch(IOException e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+        else{
+            try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(namafile, true)))){
+                ListIterator iter = konten.listIterator();
+                while(iter.hasNext()){
+                    writer.println(iter.next());
+                }
+                writer.close();
+                return true;
+            }
+            catch(IOException e){
+                e.printStackTrace();
+                return false;
+            }
+        }
+    }
+    public boolean TulisFile(String namafile, ObservableList konten, boolean isCreateNewFile){
         if (isCreateNewFile){
             try{
                 PrintWriter writer = new PrintWriter(namafile, "UTF-8");

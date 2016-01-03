@@ -26,8 +26,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -57,7 +60,13 @@ public class MainController implements Initializable {
     @FXML
     private TextField txtName;
     @FXML
+    private TextField txtHarga;
+    @FXML
+    private TextField txtBerat;
+    @FXML
     private TextField txtUserName;
+    @FXML
+    private TextArea txtPesan;
     @FXML
     private PasswordField txtUserPass;
     @FXML
@@ -88,13 +97,50 @@ public class MainController implements Initializable {
     private Pane paneAbout;
     @FXML
     private ComboBox cbJenisCucian;
+    
+    @FXML
+    private TableView<Order> TabelNewOrder;
+    @FXML
+    private TableColumn<Order, Integer> tnolid;
+    @FXML
+    private TableColumn<Order, String> tnonama;
+    @FXML
+    private TableColumn<Order, String> tnoalamat;
+    @FXML
+    private TableColumn<Order, String> tnohp;
+    @FXML
+    private TableColumn<Order, String> tnoJenis;
+    @FXML
+    private TableColumn<Order, String> tnotglAmbil;
+    @FXML
+    private TableColumn<Order, String> tnotglAntar;
+   
+    @FXML
+    private TableView<Order> TabelKonfirmedOrder;
+    @FXML
+    private TableColumn<Order, Integer> tkolid;
+    @FXML
+    private TableColumn<Order, String> tkonama;
+    @FXML
+    private TableColumn<Order, String> tkoalamat;
+    @FXML
+    private TableColumn<Order, String> tkohp;
+    @FXML
+    private TableColumn<Order, String> tkojenis;
+    @FXML
+    private TableColumn<Order, String> tkotglAntar;
+    @FXML
+    private TableColumn<Order, Integer> tkoharga;
+    
     @FXML
     private ListView<String> lvStatusKategori;
-    
             
     private SingleSelectionModel<Tab> selectionModel;
     private SingleSelectionModel<Tab> selectionModel1;
     private SingleSelectionModel<ComboBox> cbSM;
+    private ArrayList<Order> arraydata;
+    private ObservableList<Order> data;
+    private ObservableList<Order> datakonfirm;
     
     private boolean isAdmin = false;
     private ArrayList userpass = new ArrayList();
@@ -144,9 +190,11 @@ public class MainController implements Initializable {
     }    
     
     public void About_Click(){
-        selectionModel.select(3);
-        selectionModel1.select(3);
-        paneAbout.setVisible(true);
+        if (!apLoginForm.isVisible()){
+            selectionModel.select(3);
+            selectionModel1.select(3);
+            paneAbout.setVisible(true);
+        }
     }
     public void TabChanged(){
         int a = selectionModel.getSelectedIndex();
@@ -155,6 +203,14 @@ public class MainController implements Initializable {
             paneAbout.setVisible(false);
         } else {
             paneAbout.setVisible(true);
+        }
+        if (b == 0){
+            arraydata = useEngine.GetNewOrder();
+            data = FXCollections.observableArrayList(arraydata);
+            
+            UpdateTable(TabelNewOrder, data);
+            //ArrayList<Order> aaaa = useEngine.GetNewOrder();
+            //ShowDialog("aa",Integer.toString(data.get(0).getLid()) ,AlertType.INFORMATION);
         }
     }
     public void btnSendClick(){
@@ -206,7 +262,6 @@ public class MainController implements Initializable {
         }
     }
     public void LoginCLicked(){
-        //ShowDialog("aa", userpass.toString(),AlertType.INFORMATION);
         String username, pass;
         username = txtUserName.getText();
         pass = txtUserPass.getText();
@@ -215,15 +270,12 @@ public class MainController implements Initializable {
             apAdminMain.setVisible(true);
             apUserMain.setVisible(false);
             apLoginForm.setVisible(false);
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(800), apAdminMain);
-            fadeTransition.setFromValue(0.0);
-            fadeTransition.setToValue(1.0);
-            fadeTransition.play();
+            FadeInAnimation(apAdminMain);
             lblLogin.setText("Keluar");
             txtUserName.clear();
             txtUserPass.clear();
+            selectionModel1.select(0);
             TabChanged();
-            //ShowDialog("Login Information", member.getMessage(),AlertType.INFORMATION);
         } else{
             ShowDialog("Login Information", member.getMessage(),AlertType.INFORMATION);
         }
@@ -235,30 +287,70 @@ public class MainController implements Initializable {
             lblLogin.setText("Masuk");
             apAdminMain.setVisible(false);
             apUserMain.setVisible(true);
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(800), apUserMain);
-            fadeTransition.setFromValue(0.0);
-            fadeTransition.setToValue(1.0);
-            fadeTransition.play();
+            FadeInAnimation(apUserMain);
             apLoginForm.setVisible(false);
         } else{
             paneAbout.setVisible(false);
             apAdminMain.setVisible(false);
             apUserMain.setVisible(false);
             apLoginForm.setVisible(true);
-            FadeTransition fadeTransition = new FadeTransition(Duration.millis(800), apLoginForm);
-            fadeTransition.setFromValue(0.0);
-            fadeTransition.setToValue(1.0);
-            fadeTransition.play();
+            FadeInAnimation(apLoginForm);
         }
     }
     public void BackFromLoginForm(){
         apUserMain.setVisible(true);
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(800), apUserMain);
+        FadeInAnimation(apUserMain);
+        apLoginForm.setVisible(false);
+        TabChanged();
+    }
+    
+    public void KonfirmOrder(){
+        if(TabelNewOrder.getSelectionModel().isEmpty()){
+            ShowDialog("Information", "Tolong pilih salah satu order", AlertType.INFORMATION);
+        }else{
+            int intlid = data.get(TabelNewOrder.getSelectionModel().getSelectedIndex()).getLid();
+            String strName = data.get(TabelNewOrder.getSelectionModel().getSelectedIndex()).getNama();
+            String strAlamat = data.get(TabelNewOrder.getSelectionModel().getSelectedIndex()).getAlamat();
+            String strHP = data.get(TabelNewOrder.getSelectionModel().getSelectedIndex()).getNomorHP();
+            String strTglAntar = data.get(TabelNewOrder.getSelectionModel().getSelectedIndex()).getTglAntar();
+            String strJenis = data.get(TabelNewOrder.getSelectionModel().getSelectedIndex()).getJenisCucian();
+            int intharga;
+            String strPesan;
+            if(!txtPesan.getText().isEmpty()){
+             strPesan = txtPesan.getText();
+             //dosavemessage
+            }
+            datakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis, strTglAntar, 0));
+                     
+        }
+    }
+    
+    public void UpdateTable(TableView table, ObservableList<Order> list){
+        tnolid.setCellValueFactory(new PropertyValueFactory<Order, Integer>("lid"));
+        tnonama.setCellValueFactory(new PropertyValueFactory<Order, String>("nama"));
+        tnoalamat.setCellValueFactory(new PropertyValueFactory<Order, String>("alamat"));
+        tnohp.setCellValueFactory(new PropertyValueFactory<Order, String>("nomorHP"));
+        tnoJenis.setCellValueFactory(new PropertyValueFactory<Order, String>("jenisCucian"));
+        tnotglAmbil.setCellValueFactory(new PropertyValueFactory<Order, String>("tglAmbil"));
+        tnotglAntar.setCellValueFactory(new PropertyValueFactory<Order, String>("tglAntar"));
+        table.setItems(list);
+    }
+    public void UpdateTableKonfirm(TableView table, ObservableList<Order> list){
+        tkolid.setCellValueFactory(new PropertyValueFactory<Order, Integer>("lid"));
+        tkonama.setCellValueFactory(new PropertyValueFactory<Order, String>("nama"));
+        tkoalamat.setCellValueFactory(new PropertyValueFactory<Order, String>("alamat"));
+        tkohp.setCellValueFactory(new PropertyValueFactory<Order, String>("nomorHP"));
+        tkojenis.setCellValueFactory(new PropertyValueFactory<Order, String>("jenisCucian"));
+        tkotglAntar.setCellValueFactory(new PropertyValueFactory<Order, String>("tglAntar"));
+        tkoharga.setCellValueFactory(new PropertyValueFactory<Order, Integer>("harga"));
+        table.setItems(list);
+    }
+    
+    public void FadeInAnimation(AnchorPane obj){
+        FadeTransition fadeTransition = new FadeTransition(Duration.millis(800), obj);
         fadeTransition.setFromValue(0.0);
         fadeTransition.setToValue(1.0);
         fadeTransition.play();
-        apLoginForm.setVisible(false);
-        TabChanged();
     }
     
     public void ResetForm(){

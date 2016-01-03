@@ -1,6 +1,7 @@
 package veloundry.Engine;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Random;
 import javafx.scene.control.Alert;
 
@@ -11,6 +12,15 @@ public class BoEngine {
     private Connection con = new Connection();
     private Order data_order;
     private String Message;
+    private boolean currentState;
+
+    public boolean isCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(boolean currentState) {
+        this.currentState = currentState;
+    }
 
     public String getMessage() {
         return Message;
@@ -42,6 +52,31 @@ public class BoEngine {
             setMessage(e.getMessage());
         }
         return state;
+    }
+    
+    public ArrayList<Order> GetNewOrder(){
+        ArrayList<Order> data = new ArrayList();
+        try{
+            ArrayList tmp = new ArrayList();
+            String tmp2;
+            tmp = dbms.BacaFile("Order.txt");
+            ListIterator iter = tmp.listIterator();
+            int i = 0;
+            while(iter.hasNext()){
+                if (i != 0){
+                    tmp2 = tmp.get(i).toString();
+                    String[] thedata = dbms.SplitString(tmp2);
+                    int a = Integer.parseInt(thedata[0]);
+                    Order order = new Order(a,thedata[1],thedata[2],thedata[3],thedata[4],thedata[5],thedata[6]);
+                    data.add(order);
+                }
+                i++;
+            }
+            this.currentState = true;
+        } catch(Exception e){
+            this.currentState = false;
+        }
+        return data;
     }
     
     public int GenerateLID(){
