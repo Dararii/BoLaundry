@@ -57,13 +57,16 @@ public class DBManagement {
             }
         }
     }
-    public boolean TulisFile(String namafile, ObservableList konten, boolean isCreateNewFile){
+    public boolean TulisFile(String namafile, ObservableList<Order> konten, boolean isCreateNewFile){
         if (isCreateNewFile){
             try{
                 PrintWriter writer = new PrintWriter(namafile, "UTF-8");
-                ListIterator iter = konten.listIterator();
-                while(iter.hasNext()){
-                    writer.println(iter.next());
+                for (Order konten1 : konten) {
+                    String tmp = Integer.toString(konten1.getLid()) + "|" + konten1.getNama() + "|" +
+                            konten1.getAlamat() + "|" + konten1.getNomorHP() + "|" +
+                            konten1.getJenisCucian() + "|" + konten1.getTglAntar() +
+                            "|" + Integer.toString(konten1.getHarga());
+                    writer.println(tmp);
                 }
                 writer.close();
                 return true;

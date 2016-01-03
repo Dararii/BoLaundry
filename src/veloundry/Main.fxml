@@ -271,7 +271,7 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="356.0" prefWidth="588.0" style="-fx-background-color: #FAFAFA;">
                            <children>
-                              <Button fx:id="btnSendReq1" layoutX="371.0" layoutY="321.0" mnemonicParsing="false" onAction="#btnSendClick" onMouseClicked="#btnSendClick" prefHeight="44.0" prefWidth="157.0" text="Konfirmasi">
+                              <Button fx:id="btnSendReq1" layoutX="371.0" layoutY="321.0" mnemonicParsing="false" onAction="#KonfirmOrder" prefHeight="44.0" prefWidth="157.0" text="Konfirmasi">
                                  <graphic>
                                     <ImageView fitHeight="43.0" fitWidth="44.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -330,9 +330,9 @@
                                     <Image url="@Icon/Antar.png" />
                                  </image>
                               </ImageView>
-                              <TextField fx:id="txtHarga" layoutX="136.0" layoutY="317.0" />
+                              <TextField fx:id="txtHarga" layoutX="92.0" layoutY="318.0" />
                               <Label layoutX="22.0" layoutY="321.0" text="Harga (Rp)" />
-                              <Button fx:id="btntest111" layoutX="344.0" layoutY="323.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="183.0" text="Proses Pengantaran">
+                              <Button fx:id="btntest111" layoutX="389.0" layoutY="323.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="156.0" text="Proses Pengantaran">
                                  <graphic>
                                     <ImageView fitHeight="31.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -347,12 +347,22 @@
                                     <TableColumn fx:id="tkonama" prefWidth="104.0" text="Nama" />
                                     <TableColumn fx:id="tkoalamat" editable="false" prefWidth="85.0" text="Alamat" />
                                     <TableColumn fx:id="tkohp" prefWidth="88.0" text="Phone" />
-                                    <TableColumn fx:id="tkotglAntar" prefWidth="99.0" text="Tanggal Antar" />
-                                    <TableColumn fx:id="tkoharga" prefWidth="106.0" text="Harga" />
+                                    <TableColumn fx:id="tkojenis" prefWidth="75.0" text="Jenis Cuci" />
+                                    <TableColumn fx:id="tkotglAntar" prefWidth="108.0" text="Tanggal Antar" />
+                                    <TableColumn fx:id="tkoharga" prefWidth="97.0" text="Harga" />
                                  </columns>
                               </TableView>
                               <Label layoutX="22.0" layoutY="352.0" text="Berat (Kg)" />
-                              <TextField fx:id="txtBerat" layoutX="136.0" layoutY="348.0" />
+                              <TextField fx:id="txtBerat" layoutX="92.0" layoutY="348.0" />
+                              <Button fx:id="btntest1111" layoutX="253.0" layoutY="323.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="127.0" text="Update Harga">
+                                 <graphic>
+                                    <ImageView fitHeight="31.0" fitWidth="34.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@Icon/order.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                            </children>
                         </AnchorPane>
                      </content>

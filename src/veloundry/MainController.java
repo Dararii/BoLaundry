@@ -139,6 +139,7 @@ public class MainController implements Initializable {
     private SingleSelectionModel<Tab> selectionModel1;
     private SingleSelectionModel<ComboBox> cbSM;
     private ArrayList<Order> arraydata;
+    private ArrayList<Order> arraydatakonfirm;
     private ObservableList<Order> data;
     private ObservableList<Order> datakonfirm;
     
@@ -317,11 +318,21 @@ public class MainController implements Initializable {
             int intharga;
             String strPesan;
             if(!txtPesan.getText().isEmpty()){
-             strPesan = txtPesan.getText();
-             //dosavemessage
+                strPesan = txtPesan.getText();
+                String toWrite = Integer.toString(intlid) + "|" + strPesan;
+                dbms.TulisFile("pesan", toWrite, false);
             }
+            arraydatakonfirm = useEngine.GetConfirmedOrder();
+            datakonfirm = FXCollections.observableArrayList(arraydatakonfirm);
             datakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis, strTglAntar, 0));
-                     
+            arraydatakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis, strTglAntar, 0));
+            data.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
+            arraydata.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
+            UpdateTableKonfirm(TabelKonfirmedOrder, datakonfirm);
+            UpdateTable(TabelNewOrder, data);
+            dbms.TulisFile("order_acc.txt", datakonfirm, true);
+            if (!this.useEngine.isCurrentState())
+                ShowDialog("aa", this.useEngine.getMessage(),AlertType.INFORMATION);
         }
     }
     

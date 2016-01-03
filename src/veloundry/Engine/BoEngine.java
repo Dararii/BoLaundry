@@ -3,16 +3,25 @@ package veloundry.Engine;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Random;
-import javafx.scene.control.Alert;
 
 /**@author Darari*/
 public class BoEngine {
     private final ArrayList<Order> data = new ArrayList();
     private DBManagement dbms = new DBManagement();
+    private DateManagement dateman = new DateManagement();
     private Connection con = new Connection();
     private Order data_order;
     private String Message;
+    private String currentFileDate;
     private boolean currentState;
+    
+    public String getCurrentFileDate() {
+        return currentFileDate;
+    }
+
+    public void setCurrentFileDate(String currentFileDate) {
+        this.currentFileDate = currentFileDate;
+    }
 
     public boolean isCurrentState() {
         return currentState;
@@ -75,6 +84,33 @@ public class BoEngine {
             this.currentState = true;
         } catch(Exception e){
             this.currentState = false;
+        }
+        return data;
+    }
+    public ArrayList<Order> GetConfirmedOrder(){
+        ArrayList<Order> data = new ArrayList();
+        try{
+            ArrayList tmp = new ArrayList();
+            String tmp2;
+            tmp = dbms.BacaFile("order_acc.txt");
+            ListIterator iter = tmp.listIterator();
+            int i = 0;
+            while(iter.hasNext()){
+                if (i != 0){
+                    tmp2 = tmp.get(i).toString();
+                    String[] thedata = dbms.SplitString(tmp2);
+                    int lid = Integer.parseInt(thedata[0]);
+                    int harga = Integer.parseInt(thedata[6]);
+                    Order order = new Order(lid,thedata[1],thedata[2],thedata[3],thedata[4],thedata[5],harga);
+                    data.add(order);
+                }
+                i++;
+            }
+            this.currentState = true;
+        } catch(Exception e){
+            this.currentState = false;
+            e.printStackTrace();
+            setMessage(e.getMessage());
         }
         return data;
     }
