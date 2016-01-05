@@ -72,7 +72,9 @@ public class BoEngine {
             ListIterator iter = tmp.listIterator();
             int i = 0;
             while(iter.hasNext()){
-                if (i != 0){
+                if (i == 0){
+                    setCurrentFileDate(tmp.get(i).toString());
+                } else if (i != 0){
                     tmp2 = tmp.get(i).toString();
                     String[] thedata = dbms.SplitString(tmp2);
                     int a = Integer.parseInt(thedata[0]);
@@ -89,14 +91,16 @@ public class BoEngine {
     }
     public ArrayList<Order> GetConfirmedOrder(){
         ArrayList<Order> data = new ArrayList();
+        int i = 0;
         try{
             ArrayList tmp = new ArrayList();
             String tmp2;
             tmp = dbms.BacaFile("order_acc.txt");
             ListIterator iter = tmp.listIterator();
-            int i = 0;
-            while(iter.hasNext()){
-                if (i != 0){
+            while(i < tmp.size()){
+                if (i == 0){
+                    setCurrentFileDate(tmp.get(i).toString());
+                } else if (i != 0){
                     tmp2 = tmp.get(i).toString();
                     String[] thedata = dbms.SplitString(tmp2);
                     int lid = Integer.parseInt(thedata[0]);

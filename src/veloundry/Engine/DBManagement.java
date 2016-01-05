@@ -78,9 +78,12 @@ public class DBManagement {
         }
         else{
             try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(namafile, true)))){
-                ListIterator iter = konten.listIterator();
-                while(iter.hasNext()){
-                    writer.println(iter.next());
+                for (Order konten1 : konten) {
+                    String tmp = Integer.toString(konten1.getLid()) + "|" + konten1.getNama() + "|" +
+                            konten1.getAlamat() + "|" + konten1.getNomorHP() + "|" +
+                            konten1.getJenisCucian() + "|" + konten1.getTglAntar() +
+                            "|" + Integer.toString(konten1.getHarga());
+                    writer.println(tmp);
                 }
                 writer.close();
                 return true;

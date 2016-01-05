@@ -138,8 +138,9 @@ public class MainController implements Initializable {
     private SingleSelectionModel<Tab> selectionModel;
     private SingleSelectionModel<Tab> selectionModel1;
     private SingleSelectionModel<ComboBox> cbSM;
-    private ArrayList<Order> arraydata;
-    private ArrayList<Order> arraydatakonfirm;
+    private ArrayList arraydatamentah;
+    private ArrayList arraydata;
+    private ArrayList arraydatakonfirm;
     private ObservableList<Order> data;
     private ObservableList<Order> datakonfirm;
     
@@ -171,12 +172,7 @@ public class MainController implements Initializable {
         selectionModel1 = tabMain1.getSelectionModel();
         cbSM = cbJenisCucian.getSelectionModel();
         
-        if (this.dbms.CheckFileExist("user.txt") == true){
-            this.userpass = this.dbms.BacaFile("user.txt");
-        }
-        else {
-            this.dbms.TulisFile("user.txt", "",true);
-        }
+        CekFileAtStart();
         
         timer.schedule(new TimerTask() {
             public void run() {
@@ -189,6 +185,22 @@ public class MainController implements Initializable {
             }
         }, 0, 15000);
     }    
+    
+    public void CekFileAtStart(){
+        if (this.dbms.CheckFileExist("user.txt") == true){
+            this.userpass = this.dbms.BacaFile("user.txt");
+        }
+        else {
+            this.dbms.TulisFile("user.txt", "",true);
+        }
+        if (this.dbms.CheckFileExist("order_acc.txt") == true){
+            this.userpass = this.dbms.BacaFile("order_acc.txt");
+        }
+        else {
+            String a = dateman.GetCurrentDate();
+            this.dbms.TulisFile("order_acc.txt", a,true);
+        }
+    }
     
     public void About_Click(){
         if (!apLoginForm.isVisible()){
@@ -206,6 +218,7 @@ public class MainController implements Initializable {
             paneAbout.setVisible(true);
         }
         if (b == 0){
+            arraydatamentah = this.dbms.BacaFile("Order.txt");
             arraydata = useEngine.GetNewOrder();
             data = FXCollections.observableArrayList(arraydata);
             
@@ -322,17 +335,27 @@ public class MainController implements Initializable {
                 String toWrite = Integer.toString(intlid) + "|" + strPesan;
                 dbms.TulisFile("pesan", toWrite, false);
             }
-            arraydatakonfirm = useEngine.GetConfirmedOrder();
-            datakonfirm = FXCollections.observableArrayList(arraydatakonfirm);
-            datakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis, strTglAntar, 0));
-            arraydatakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis, strTglAntar, 0));
-            data.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
-            arraydata.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
-            UpdateTableKonfirm(TabelKonfirmedOrder, datakonfirm);
-            UpdateTable(TabelNewOrder, data);
-            dbms.TulisFile("order_acc.txt", datakonfirm, true);
-            if (!this.useEngine.isCurrentState())
-                ShowDialog("aa", this.useEngine.getMessage(),AlertType.INFORMATION);
+            try{
+                arraydatakonfirm = useEngine.GetConfirmedOrder();
+                datakonfirm = FXCollections.observableArrayList(arraydatakonfirm);
+                datakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis, strTglAntar, 0));
+                arraydatakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis, strTglAntar, 0));
+                arraydata.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
+                arraydatamentah.remove(0);
+                arraydatamentah.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
+                data.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
+                UpdateTableKonfirm(TabelKonfirmedOrder, datakonfirm);
+                UpdateTable(TabelNewOrder, data);
+                dbms.TulisFile("order_acc.txt", dateman.GetCurrentDate(), true);
+                dbms.TulisFile("order_acc.txt", datakonfirm, false);
+                dbms.TulisFile("Order.txt", dateman.GetCurrentDate(), true);
+                dbms.TulisFile("Order.txt", arraydatamentah, false);
+                if (!this.useEngine.isCurrentState()) {
+                    ShowDialog("Error", "Error Message : " + this.useEngine.getMessage(),AlertType.ERROR);
+                }
+            } catch(Exception e){
+                ShowDialog("Error", "Error : " + Integer.toString(TabelNewOrder.getSelectionModel().getSelectedIndex()),AlertType.ERROR);
+            }
         }
     }
     
