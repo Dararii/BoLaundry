@@ -1,8 +1,11 @@
 package veloundry.Engine;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.ListIterator;
 import java.util.Random;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.scene.control.ProgressIndicator;
 
 /**@author Darari*/
 public class BoEngine {
@@ -14,6 +17,15 @@ public class BoEngine {
     private String Message;
     private String currentFileDate;
     private boolean currentState;
+    private SimpleDoubleProperty prop = new SimpleDoubleProperty(0);
+
+    public double getProp() {
+        return prop.get();
+    }
+
+    public void setProp(double prop) {
+        this.prop = new SimpleDoubleProperty(prop);
+    }
     
     public String getCurrentFileDate() {
         return currentFileDate;
@@ -44,21 +56,107 @@ public class BoEngine {
     }
     
     public boolean AddNewOrder(String name, String alamat, String hp, String JenisCucian, String date1, String date2){
-        boolean state;
+        boolean state = false;
+        ArrayList tmp;
         int LID = GenerateLID(); 
         try{
+            setProp(0.15);
             String konten = Integer.toString(LID) + "|" + name + "|" + alamat + "|" + hp + "|" + JenisCucian + "|" + date1 + "|" + date2;
-            boolean b = dbms.TulisFile("Order.txt", konten, false);
-            if (b) {
-                setMessage("Order dikirimkan\nLID Anda : " + Integer.toString(LID) + "\nSimpan kode Anda untuk memantau Loundry Anda.");
+            int c = GetFileFromServer("Order.txt", "Darari");
+            setProp(0.35);
+            if (c == 2){
+                tmp = dbms.BacaFile("Order.txt");
+                tmp.remove(0);
+                tmp.add(0, this.dateman.GetCurrentDate());
+                tmp.add(tmp.size(), konten);
+                boolean b = dbms.TulisFile("Order.txt", tmp, true);
+                setProp(0.65);
+                if (b) {
+                    boolean d = con.UploadFile("Order.txt", "Darari/", "albc.ucoz.com", "dalbc", "darari15");
+                    setProp(0.85);
+                    if (d){
+                        setProp(1);
+                        setMessage("Order dikirimkan\nLID Anda : " + Integer.toString(LID) + "\nSimpan kode Anda untuk memantau Loundry Anda.");
+                        state = true;
+                    }
+                } else {
+                    setMessage("Terjadi Error saat menulis data");
+                }
             } else {
-                setMessage("Terjadi Error");
+                setMessage("Tidak dapat mensinkronasi dengan server.");
             }
-            state = true;
         }
         catch(Exception e){
             state = false;
             setMessage(e.getMessage());
+        }
+        return state;
+    }
+    
+    public boolean isServerHasNewerFile(String filename){ //Gak mari, gak ro gawe opo
+        boolean state, isServerHas = false;
+        ArrayList tmp1, tmp2;
+        String dateLoc, dateServer;
+        Date date1, date2;
+        if (filename.equalsIgnoreCase("Order.txt")){
+            if(con.CekInetConnection("http://albc.ucoz.com")){
+                tmp1 = this.dbms.BacaFile(filename);
+                if(con.DownloadFile("http://albc.ucoz.com/Darari/Order.txt", "Order.db")){
+                    tmp2 = this.dbms.BacaFile("Order.db");
+                    try{
+                        dateLoc  = tmp1.get(0).toString();
+                        dateServer = tmp2.get(0).toString();
+                        date1 = this.dateman.CreateDateFormString(dateLoc);
+                        date2 = this.dateman.CreateDateFormString(dateServer);
+                        boolean a = this.dateman.CekIsDateNewer(date1, date2);
+                    } catch(Exception e){
+                        
+                    }
+                }
+                else{
+                    isServerHas = false;
+                }
+            }
+            
+        }
+        return true;
+    }
+    
+    public int GetFileFromServer(String filename, String username){
+        int a = 0;
+        if (filename.equalsIgnoreCase("Order.txt")){
+            if(con.CekInetConnection("http://albc.ucoz.com")){
+                a = 1;
+                if(con.DownloadFile("http://albc.ucoz.com/" + username + "/Order.txt", "Order.txt")){
+                    a = 2;
+                }
+                else{
+                    if (con.getMessage().equalsIgnoreCase("File Not Found")){
+                        if (this.dbms.CheckFileExist("Order.txt") == true){
+                            
+                        }
+                        else {
+                            String x = dateman.GetCurrentDate();
+                            this.dbms.TulisFile("Order.txt", x,true);
+                        }
+                        PutFileToServer("Order.txt", username);
+                    }
+                }
+            }
+        }
+        return a;
+    }
+    
+    public boolean PutFileToServer(String filename, String username){
+        boolean state = false;
+        if(con.CekInetConnection("http://albc.ucoz.com")){
+            if(con.UploadFile(filename, username + "/", "albc.ucoz.com", "dalbc", "darari15")){
+                state = true;
+            }
+            else{
+                setMessage("Unable to Sync with server");
+            }
+            setMessage("No Connection");
         }
         return state;
     }

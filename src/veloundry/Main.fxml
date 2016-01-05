@@ -20,7 +20,7 @@
             <Image url="@Icon/Backgorund.jpg" />
          </image>
       </ImageView>
-      <AnchorPane fx:id="apUserMain" layoutX="3.0" layoutY="94.0" prefHeight="383.0" prefWidth="645.0" visible="false">
+      <AnchorPane fx:id="apUserMain" layoutX="3.0" layoutY="94.0" prefHeight="383.0" prefWidth="645.0">
          <children>
             <TabPane fx:id="tabMain" layoutX="-4.0" layoutY="-1.0" prefHeight="383.0" prefWidth="659.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="100.0" tabMaxWidth="90.0" tabMinHeight="100.0">
                <stylesheets>
@@ -73,6 +73,7 @@
                                     <Font name="System Italic" size="12.0" />
                                  </font>
                               </Label>
+                              <ProgressIndicator fx:id="pbOrder" layoutX="349.0" layoutY="250.0" progress="0.0" />
                            </children>
                         </AnchorPane>
                      </content>
@@ -260,7 +261,7 @@
             </TabPane>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="apAdminMain" layoutX="3.0" layoutY="94.0" prefHeight="383.0" prefWidth="645.0">
+      <AnchorPane fx:id="apAdminMain" layoutX="3.0" layoutY="94.0" prefHeight="383.0" prefWidth="645.0" visible="false">
          <children>
             <TabPane fx:id="tabMain1" layoutX="-4.0" layoutY="-1.0" prefHeight="383.0" prefWidth="659.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="100.0" tabMaxWidth="90.0" tabMinHeight="100.0">
                <stylesheets>

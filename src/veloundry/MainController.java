@@ -8,10 +8,15 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,6 +28,8 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -97,6 +104,8 @@ public class MainController implements Initializable {
     private Pane paneAbout;
     @FXML
     private ComboBox cbJenisCucian;
+    @FXML
+    private ProgressIndicator pbOrder;
     
     @FXML
     private TableView<Order> TabelNewOrder;
@@ -144,7 +153,9 @@ public class MainController implements Initializable {
     private ObservableList<Order> data;
     private ObservableList<Order> datakonfirm;
     
+    private SimpleDoubleProperty prop = new SimpleDoubleProperty(0);
     private boolean isAdmin = false;
+    private boolean isConnected = false;
     private ArrayList userpass = new ArrayList();
     
     private final Connection con = new Connection();
@@ -171,14 +182,14 @@ public class MainController implements Initializable {
         selectionModel = tabMain.getSelectionModel();
         selectionModel1 = tabMain1.getSelectionModel();
         cbSM = cbJenisCucian.getSelectionModel();
-        
+        pbOrder.progressProperty().bind(prop);
         CekFileAtStart();
         
         timer.schedule(new TimerTask() {
             public void run() {
                  Platform.runLater(new Runnable() {
                     public void run() {
-                        con.CekInetConnection("http://albc.ucoz.com");
+                        isConnected = con.CekInetConnection("http://albc.ucoz.com");
                         lblnotifstatus.setText(con.getMessage());
                     }
                 });
@@ -193,6 +204,18 @@ public class MainController implements Initializable {
         else {
             this.dbms.TulisFile("user.txt", "",true);
         }
+        
+        int z = this.useEngine.GetFileFromServer("Order.txt", "Darari");
+        if (z != 2){
+            if (this.dbms.CheckFileExist("Order.txt") == true){
+                //this.userpass = this.dbms.BacaFile("order_acc.txt");
+            }
+            else {
+                String a = dateman.GetCurrentDate();
+                this.dbms.TulisFile("Order.txt", a,true);
+            }
+        }
+        
         if (this.dbms.CheckFileExist("order_acc.txt") == true){
             this.userpass = this.dbms.BacaFile("order_acc.txt");
         }
