@@ -51,7 +51,6 @@
                                  </font>
                               </Label>
                               <Label layoutX="139.0" layoutY="66.0" prefHeight="24.0" prefWidth="272.0" text="Layanan ambil laundry langsung di rumah Anda." />
-                              <TextArea fx:id="txtAlamat" layoutX="125.0" layoutY="174.0" prefHeight="36.0" prefWidth="408.0" />
                               <TextField fx:id="txtName" layoutX="125.0" layoutY="138.0" />
                               <TextField fx:id="txtHP" layoutX="125.0" layoutY="220.0" />
                               <ComboBox fx:id="cbJenisCucian" layoutX="125.0" layoutY="257.0" prefWidth="150.0" />
@@ -74,6 +73,7 @@
                                  </font>
                               </Label>
                               <ProgressIndicator fx:id="pbOrder" layoutX="349.0" layoutY="250.0" progress="0.0" />
+                              <TextField fx:id="txtAlamat" layoutX="126.0" layoutY="179.0" prefHeight="25.0" prefWidth="403.0" />
                            </children>
                         </AnchorPane>
                      </content>
@@ -100,29 +100,16 @@
                                     <Image url="@Icon/Antar.png" />
                                  </image>
                               </ImageView>
-                              <TextField layoutX="131.0" layoutY="139.0" />
-                              <ProgressIndicator layoutX="294.0" layoutY="132.0" progress="0.0" />
+                              <TextField fx:id="idLaundry" layoutX="131.0" layoutY="139.0" />
+                              <ProgressIndicator fx:id="pbCekStat" layoutX="294.0" layoutY="132.0" progress="0.0" />
                               <Label layoutX="21.0" layoutY="143.0" text="ID Pesanan Loundry" />
-                              <SplitPane dividerPositions="0.22986247544204322" layoutX="21.0" layoutY="208.0" prefHeight="172.0" prefWidth="511.0">
-                                 <items>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="158.0" prefWidth="168.0">
-                                       <children>
-                                          <ListView fx:id="lvStatusKategori" layoutX="-34.0" layoutY="-15.0" prefHeight="158.0" prefWidth="132.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                                       <children>
-                                          <ListView fx:id="lvStatus" layoutX="36.0" layoutY="-30.0" prefHeight="158.0" prefWidth="371.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
-                                 </items>
-                              </SplitPane>
+                              <ListView fx:id="lvStatus" layoutX="21.0" layoutY="211.0" prefHeight="158.0" prefWidth="513.0" />
                               <Label layoutX="21.0" layoutY="183.0" text="Informasi">
                                  <font>
                                     <Font name="System Bold Italic" size="12.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="btntest11" layoutX="354.0" layoutY="122.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="178.0" text="Cek Laundry">
+                              <Button fx:id="btntest11" layoutX="354.0" layoutY="122.0" mnemonicParsing="false" onAction="#CekMyLaundry" prefHeight="60.0" prefWidth="178.0" text="Cek Laundry">
                                  <graphic>
                                     <ImageView fitHeight="52.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
                                        <image>

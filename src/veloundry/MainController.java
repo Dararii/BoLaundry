@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.ListIterator;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,6 +19,7 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -27,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -74,7 +77,7 @@ public class MainController implements Initializable {
     @FXML
     private PasswordField txtUserPass;
     @FXML
-    private TextArea txtAlamat;
+    private TextField txtAlamat;
     @FXML
     private DatePicker dpTglAntar;
     @FXML
@@ -180,10 +183,18 @@ public class MainController implements Initializable {
     private Label lblhargaboneka;
     @FXML
     private Label lblhargaseprai;
-    
     @FXML
-    private ListView<String> lvStatusKategori;
-            
+    private Label lblStatus;
+    @FXML
+    private ProgressIndicator pbCekStat;
+    @FXML
+    private ListView<String> lvStatus;
+    @FXML
+    private TextField idLaundry;
+    
+    private ObservableList<String> datauserview;
+    private ArrayList dataview;
+    
     private SingleSelectionModel<Tab> selectionModel;
     private SingleSelectionModel<Tab> selectionModel1;
     private SingleSelectionModel<ComboBox> cbSM;
@@ -219,15 +230,13 @@ public class MainController implements Initializable {
         this.txtHargaKering.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
         this.txtHargaSetrika.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
         this.txtHargaBoneka.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
+        this.idLaundry.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(3));
         
-        ObservableList<String> items =FXCollections.observableArrayList (
-        "Nama (LID)", "Alamat", "Jenis Cucian", "Tanggal Ambil",
-                "Tanggal Antar", "Berat Cucian", "Harga", "Catatan", "Status");
         ObservableList<String> jenisCuci = FXCollections.observableArrayList(
         "Cuci Basah", "Cuci Kering", "Cuci Setrika", "Cuci Boneka", 
                 "Cuci Gorden/Sprei");
+        
         cbJenisCucian.setItems(jenisCuci);
-        lvStatusKategori.setItems(items);
         selectionModel = tabMain.getSelectionModel();
         selectionModel1 = tabMain1.getSelectionModel();
         cbSM = cbJenisCucian.getSelectionModel();
@@ -318,6 +327,113 @@ public class MainController implements Initializable {
             this.lblhsaldo.setText(Integer.toString(saldo));
         }
     }
+    
+    public void CekMyLaundry(){
+        final Task task;
+        if ((this.idLaundry.getText() == null || this.idLaundry.getText().trim().isEmpty())){
+            ShowDialog("Info", "Tolong Masukkan Code Laundry Anda !", AlertType.INFORMATION);
+            pbCekStat.setProgress(0);
+            lblStatus.setText("Nothing");
+        } else{
+            task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    try{
+                        boolean state = false;
+                        String datanya = "";
+                        int lcode = Integer.parseInt(idLaundry.getText());
+                        int dblcode;
+                        updateProgress(0.1, 1);
+                        updateMessage("Cek Koneksi");
+                        boolean a = con.CekInetConnection("http://albc.ucoz.com");
+                        Thread.sleep(1000);
+                        if (a){
+                            updateProgress(0.2, 1);
+                            updateMessage("Connected !!");
+                            Thread.sleep(500);
+                            updateProgress(0.3, 1);
+                            updateMessage("Sinkronasi..");
+                            Thread.sleep(900);
+                            int b = useEngine.GetFileFromServer("order_acc.txt", "Darari");
+                            if (b==2){
+                                Thread.sleep(1000);
+                                updateProgress(0.4, 1);
+                                updateMessage("Reading file..");
+                                dataview = dbms.BacaFile("order_acc.txt");
+                                ListIterator iter = dataview.listIterator();
+                                int i = 0;
+                                while(iter.hasNext()){
+                                    if (i != 0){
+                                        String z = iter.next().toString();
+                                        String[] tmp = dbms.SplitString(z);
+                                        dblcode = Integer.parseInt(tmp[0]);
+                                        if (dblcode == lcode) {
+                                            datanya = z;
+                                            state = true;
+                                            Thread.sleep(1000);
+                                            updateProgress(0.7, 1);
+                                            updateMessage("data found");
+                                            break;
+                                        }
+                                    }
+                                    else{
+                                        iter.next();
+                                    }
+                                    i++;
+                                }
+                                if (state){
+                                    Thread.sleep(1000);
+                                    updateProgress(0.85, 1);
+                                    updateMessage("Parsing..");
+                                    ObservableList<String> items =FXCollections.observableArrayList (
+                                        "LID", "Nama", "Alamat","Nomor HP", "Jenis Cucian", "Tanggal Ambil",
+                                        "Tanggal Antar", "Harga", "Berat Cucian", "Catatan", "Status");
+                                    String[] tmp = dbms.SplitString(datanya);
+                                    ArrayList x = new ArrayList();
+                                    for(int j = 0;j<tmp.length;j++){
+                                        x.add(items.get(j) + " : " + tmp[j]);
+                                    }
+                                    Thread.sleep(1000);
+                                    updateProgress(0.95, 1);
+                                    updateMessage("Building data..");
+                                    datauserview = FXCollections.observableArrayList(x);
+                                    Thread.sleep(1000);
+                                    updateProgress(1, 1);
+                                    updateMessage("Done");
+                                    lvStatus.setItems(datauserview);
+                                    idLaundry.clear();
+                                }
+                                else{
+                                    Thread.sleep(500);
+                                    updateProgress(1, 1);
+                                    updateMessage("Laundry ID Not Found");
+                                    idLaundry.clear();
+                                    Thread.sleep(1000);
+                                }
+                            } else{
+                                updateMessage("Error when sync");
+                            }
+                        } else{
+                            updateMessage("Error");
+                        }
+
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                        updateMessage("Exception Error");
+                        return null;
+                    }
+
+                    return null;
+                }
+            };
+            //pbCekStat.setProgress(0);
+            pbCekStat.progressProperty().bind(task.progressProperty());
+            lblStatus.textProperty().bind(task.messageProperty());
+            new Thread(task).start();
+        }
+    }
+    
     public void btnSendClick(){
         String nama, alamat, hp, jenis;
         LocalDate ld1, ld2;
