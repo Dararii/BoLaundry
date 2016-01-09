@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
@@ -69,7 +70,7 @@ public class MainController implements Initializable {
     @FXML
     private TextField txtUserName;
     @FXML
-    private TextArea txtPesan;
+    private TextField txtPesan;
     @FXML
     private PasswordField txtUserPass;
     @FXML
@@ -138,6 +139,49 @@ public class MainController implements Initializable {
     private TableColumn<Order, Integer> tkoharga;
     
     @FXML
+    private TableView<Order> TabelCompletedOrder;
+    @FXML
+    private TableColumn<Order, Integer> tcolid;
+    @FXML
+    private TableColumn<Order, String> tcohp;
+    @FXML
+    private TableColumn<Order, String> tcotglAmbil;
+    @FXML
+    private TableColumn<Order, String> tcotglAntar;
+    @FXML
+    private TableColumn<Order, Integer> tcoharga;
+    
+    @FXML
+    private TextField txtHargaBasah;
+    @FXML
+    private TextField txtHargaKering;
+    @FXML
+    private TextField txtHargaSetrika;
+    @FXML
+    private TextField txtHargaBoneka;
+    @FXML
+    private Button btnSetHarga;
+    @FXML
+    private Label lblNamaLaundry;
+    @FXML
+    private Label lblAlamatLaundry;
+    @FXML
+    private Label lblhcount;
+    @FXML
+    private Label lblhsaldo;
+    
+    @FXML
+    private Label lblhargakering;
+    @FXML
+    private Label lblhargabasah;
+    @FXML
+    private Label lblhargasetrika;
+    @FXML
+    private Label lblhargaboneka;
+    @FXML
+    private Label lblhargaseprai;
+    
+    @FXML
     private ListView<String> lvStatusKategori;
             
     private SingleSelectionModel<Tab> selectionModel;
@@ -162,7 +206,7 @@ public class MainController implements Initializable {
     private final DBManagement dbms = new DBManagement();
     private Member member = new Member();
     private final Timer timer = new java.util.Timer();
-            
+        
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         //btntest.setContentDisplay(ContentDisplay.TOP);
@@ -170,10 +214,15 @@ public class MainController implements Initializable {
         txtHP.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(12));
         txtHarga.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
         txtBerat.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(2));
+        this.txtPesan.addEventFilter(KeyEvent.KEY_TYPED, letter_Validation(100));
+        this.txtHargaBasah.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
+        this.txtHargaKering.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
+        this.txtHargaSetrika.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
+        this.txtHargaBoneka.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
         
         ObservableList<String> items =FXCollections.observableArrayList (
         "Nama (LID)", "Alamat", "Jenis Cucian", "Tanggal Ambil",
-                "Tanggal Antar", "Berat Cucian", "Harga", "Catatan");
+                "Tanggal Antar", "Berat Cucian", "Harga", "Catatan", "Status");
         ObservableList<String> jenisCuci = FXCollections.observableArrayList(
         "Cuci Basah", "Cuci Kering", "Cuci Setrika", "Cuci Boneka", 
                 "Cuci Gorden/Sprei");
@@ -195,7 +244,9 @@ public class MainController implements Initializable {
                 });
             }
         }, 0, 15000);
-    }    
+    }
+
+    
     
     public void CekFileAtStart(){
         if (this.dbms.CheckFileExist("user.txt") == true){
@@ -252,6 +303,19 @@ public class MainController implements Initializable {
             arraydatakonfirm = useEngine.GetConfirmedOrder();
             datakonfirm = FXCollections.observableArrayList(arraydatakonfirm);
             UpdateTableKonfirm(this.TabelKonfirmedOrder, datakonfirm);
+            
+            this.arraydatacomplete = useEngine.GetCompletedOrder();
+            this.datacomplete = FXCollections.observableArrayList(this.arraydatacomplete);
+        }else if (b == 2){
+            this.arraydatacomplete = useEngine.GetCompletedOrder();
+            this.datacomplete = FXCollections.observableArrayList(arraydatacomplete);
+            UpdateTableComplete(this.TabelCompletedOrder, this.datacomplete);
+            this.lblhcount.setText(Integer.toString(this.datacomplete.size()));
+            int saldo = 0;
+            for (Order datacomplete1 : this.datacomplete) {
+                saldo += datacomplete1.getHarga();
+            }
+            this.lblhsaldo.setText(Integer.toString(saldo));
         }
     }
     public void btnSendClick(){
@@ -288,7 +352,7 @@ public class MainController implements Initializable {
                 c.setTime(zz); 
                 c.add(Calendar.DATE, 1);
                 zz = c.getTime();
-                boolean b;
+                boolean b= false;
                 b = useEngine.AddNewOrder(nama, alamat, hp, jenis, dateman.GetCurrentDate(), dateman.CreateStringFormDate(zz));
                 if (b) {
                     ShowDialog("Information", useEngine.getMessage(), AlertType.INFORMATION);
@@ -345,6 +409,10 @@ public class MainController implements Initializable {
         TabChanged();
     }
     
+    public void EksportForUserView(ObservableList<Order> data){
+        
+    }
+    
     public void KonfirmOrder(){
         if(TabelNewOrder.getSelectionModel().isEmpty()){
             ShowDialog("Information", "Tolong pilih salah satu order", AlertType.INFORMATION);
@@ -358,18 +426,17 @@ public class MainController implements Initializable {
             String strJenis = data.get(TabelNewOrder.getSelectionModel().getSelectedIndex()).getJenisCucian();
             int intharga;
             String strPesan = "";
+            String strStatus = "Dikonfirmasi";
             if(!txtPesan.getText().isEmpty()){
                 strPesan = txtPesan.getText();
-                String toWrite = Integer.toString(intlid) + "|" + strPesan;
-                //dbms.TulisFile("pesan", toWrite, false);
             }
             try{
                 int p0 = useEngine.GetFileFromServer("Order.txt", "Darari");
                 int p1 = useEngine.GetFileFromServer("order_acc.txt", "Darari");
                 arraydatakonfirm = useEngine.GetConfirmedOrder();
                 datakonfirm = FXCollections.observableArrayList(arraydatakonfirm);
-                datakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, 0, 0, strPesan));
-                arraydatakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, 0, 0, strPesan));
+                datakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, 0, 0, strPesan, strStatus));
+                arraydatakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, 0, 0, strPesan, strStatus));
                 arraydata.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
                 arraydatamentah.remove(0);
                 arraydatamentah.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
@@ -378,11 +445,12 @@ public class MainController implements Initializable {
                 UpdateTable(TabelNewOrder, data);
                 dbms.TulisFile("order_acc.txt", dateman.GetCurrentDate(), true);
                 dbms.TulisFile("order_acc.txt", datakonfirm, false);
+                boolean p4 = dbms.TulisFile("order_acc.txt", datacomplete, false);
                 dbms.TulisFile("Order.txt", dateman.GetCurrentDate(), true);
                 dbms.TulisFile("Order.txt", arraydatamentah, false);
                 boolean p2 = useEngine.PutFileToServer("order_acc.txt", "Darari");
                 boolean p3 = useEngine.PutFileToServer("Order.txt", "Darari");
-                if (p0 != 2 || p1 != 2 || !p2 || !p3){
+                if (p0 != 2 || p1 != 2 || !p2 || !p3 || !p4){
                     ShowDialog("Error", "Oopss !! Something Wrong in Connection : " + this.useEngine.getMessage(),AlertType.ERROR);
                 }
                 if (!this.useEngine.isCurrentState()) {
@@ -406,6 +474,7 @@ public class MainController implements Initializable {
             String strJenis = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getJenisCucian();
             String strTglAmbil = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getTglAmbil();
             String strPesan = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getPesan();
+            String strStatus = "Sedang Dicuci";
             int intharga;
             int intberat;
             try{
@@ -417,14 +486,61 @@ public class MainController implements Initializable {
                     intharga = Integer.parseInt(this.txtHarga.getText());
                     intberat = Integer.parseInt(this.txtBerat.getText());
                     int indexi = TabelKonfirmedOrder.getSelectionModel().getSelectedIndex();
-                    datakonfirm.set(indexi, new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, intharga, intberat, strPesan));
-                    arraydatakonfirm.set(indexi, new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, intharga, intberat, strPesan));
+                    datakonfirm.set(indexi, new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, intharga, intberat, strPesan, strStatus));
+                    arraydatakonfirm.set(indexi, new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, intharga, intberat, strPesan, strStatus));
                     UpdateTableKonfirm(TabelKonfirmedOrder, datakonfirm);
                     boolean p0 = dbms.TulisFile("order_acc.txt", dateman.GetCurrentDate(), true);
                     boolean p1 = dbms.TulisFile("order_acc.txt", datakonfirm, false);
+                    boolean p4 = dbms.TulisFile("order_acc.txt", datacomplete, false);
                     boolean p2 = useEngine.PutFileToServer("order_acc.txt", "Darari");
                     boolean p3 = useEngine.PutFileToServer("Order.txt", "Darari");
-                    if (!p0 || !p1 || !p2 || !p3){
+                    if (!p0 || !p1 || !p2 || !p3 || !p4){
+                        ShowDialog("Error", "Oopss !! Something Wrong in Connection or File Write : " + this.useEngine.getMessage(),AlertType.ERROR);
+                    }
+                    if (!this.useEngine.isCurrentState()) {
+                        ShowDialog("Error", "Error Message : " + this.useEngine.getMessage(),AlertType.ERROR);
+                    }
+                }
+            } catch(Exception e){
+                ShowDialog("Error", "Error : " + e.getMessage(),AlertType.ERROR);
+            }
+        }
+    }
+    
+    public void ProsesPengantaran(){
+        if(TabelKonfirmedOrder.getSelectionModel().isEmpty()){
+            ShowDialog("Information", "Tolong pilih salah satu order", AlertType.INFORMATION);
+        }else{
+            int intlid = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getLid();
+            String strName = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getNama();
+            String strAlamat = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getAlamat();
+            String strHP = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getNomorHP();
+            String strTglAntar = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getTglAntar();
+            String strJenis = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getJenisCucian();
+            String strTglAmbil = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getTglAmbil();
+            String strPesan = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getPesan();
+            String strStatus = "Selesai - Proses Pengantaran";
+            int intharga = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getHarga();
+            int intberat = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getBerat();
+            try{
+                if (intharga == 0 || intberat == 0){
+                    ShowDialog("Information", "Tolong isi Harga dan berat terlebih dahulu", AlertType.INFORMATION);
+                }
+                else{
+                    this.arraydatacomplete = useEngine.GetCompletedOrder();
+                    this.datacomplete = FXCollections.observableArrayList(arraydatacomplete);
+                    int indexi = TabelKonfirmedOrder.getSelectionModel().getSelectedIndex();
+                    datacomplete.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, intharga, intberat, strPesan, strStatus));
+                    arraydatacomplete.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, intharga, intberat, strPesan, strStatus));
+                    datakonfirm.remove(indexi);
+                    arraydatakonfirm.remove(indexi);
+                    UpdateTableKonfirm(TabelKonfirmedOrder, datakonfirm);
+                    boolean p0 = dbms.TulisFile("order_acc.txt", dateman.GetCurrentDate(), true);
+                    boolean p1 = dbms.TulisFile("order_acc.txt", datakonfirm, false);
+                    boolean p4 = dbms.TulisFile("order_acc.txt", datacomplete, false);
+                    boolean p2 = useEngine.PutFileToServer("order_acc.txt", "Darari");
+                    boolean p3 = useEngine.PutFileToServer("Order.txt", "Darari");
+                    if (!p0 || !p1 || !p2 || !p3 || !p4){
                         ShowDialog("Error", "Oopss !! Something Wrong in Connection or File Write : " + this.useEngine.getMessage(),AlertType.ERROR);
                     }
                     if (!this.useEngine.isCurrentState()) {
@@ -455,6 +571,14 @@ public class MainController implements Initializable {
         tkojenis.setCellValueFactory(new PropertyValueFactory<Order, String>("jenisCucian"));
         tkotglAntar.setCellValueFactory(new PropertyValueFactory<Order, String>("tglAntar"));
         tkoharga.setCellValueFactory(new PropertyValueFactory<Order, Integer>("harga"));
+        table.setItems(list);
+    }
+    public void UpdateTableComplete(TableView table, ObservableList<Order> list){
+        tcolid.setCellValueFactory(new PropertyValueFactory<Order, Integer>("lid"));
+        tcohp.setCellValueFactory(new PropertyValueFactory<Order, String>("nomorHP"));
+        tcotglAmbil.setCellValueFactory(new PropertyValueFactory<Order, String>("tglAmbil"));
+        tcotglAntar.setCellValueFactory(new PropertyValueFactory<Order, String>("tglAntar"));
+        tcoharga.setCellValueFactory(new PropertyValueFactory<Order, Integer>("harga"));
         table.setItems(list);
     }
     
@@ -518,5 +642,5 @@ public class MainController implements Initializable {
                 }
             }
         };
-    } 
+    }
 }

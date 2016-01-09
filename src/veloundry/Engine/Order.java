@@ -15,11 +15,12 @@ public class Order {
     private SimpleStringProperty tglAmbil;
     private SimpleStringProperty tglAntar;
     private SimpleStringProperty pesan;
+    private SimpleStringProperty status;
 
     public Order(){
         
     }
-    public Order(int lid, String nama, String alamat, String nomorHP, String jenisCucian,String tglAmbil, String tglAntar, int harga, int berat, String pesan) {
+    public Order(int lid, String nama, String alamat, String nomorHP, String jenisCucian,String tglAmbil, String tglAntar, int harga, int berat, String pesan, String status) {
         this.lid = new SimpleIntegerProperty(lid);
         this.nama = new SimpleStringProperty(nama);
         this.alamat = new SimpleStringProperty(alamat);
@@ -30,6 +31,7 @@ public class Order {
         this.harga = new SimpleIntegerProperty(harga);
         this.berat = new SimpleIntegerProperty(berat);
         this.pesan = new SimpleStringProperty(pesan);
+        this.status = new SimpleStringProperty(status);
     }
     public Order(int lid, String nama, String alamat, String nomorHP, String jenisCucian, String tglAmbil, String tglAntar) {
         this.lid = new SimpleIntegerProperty(lid);
@@ -90,6 +92,10 @@ public class Order {
 
     public void setPesan(String pesan) {
         this.pesan = new SimpleStringProperty(pesan);
+    }
+
+    public String getStatus() {
+        return status.get();
     }
     
 }

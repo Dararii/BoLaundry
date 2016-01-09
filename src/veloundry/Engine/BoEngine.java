@@ -200,11 +200,13 @@ public class BoEngine {
                 } else if (i != 0){
                     tmp2 = tmp.get(i).toString();
                     String[] thedata = dbms.SplitString(tmp2);
-                    int lid = Integer.parseInt(thedata[0]);
-                    int harga = Integer.parseInt(thedata[7]);
-                    int berat = Integer.parseInt(thedata[8]);
-                    Order order = new Order(lid,thedata[1],thedata[2],thedata[3],thedata[4],thedata[5],thedata[6],harga, berat, thedata[9]);
-                    data.add(order);
+                    if (!thedata[10].startsWith("Selesai")){
+                        int lid = Integer.parseInt(thedata[0]);
+                        int harga = Integer.parseInt(thedata[7]);
+                        int berat = Integer.parseInt(thedata[8]);
+                        Order order = new Order(lid,thedata[1],thedata[2],thedata[3],thedata[4],thedata[5],thedata[6],harga, berat, thedata[9], thedata[10]);
+                        data.add(order);
+                    }
                 }
                 i++;
             }
@@ -223,7 +225,7 @@ public class BoEngine {
         try{
             ArrayList tmp = new ArrayList();
             String tmp2;
-            tmp = dbms.BacaFile("order_done.txt");
+            tmp = dbms.BacaFile("order_acc.txt");
             ListIterator iter = tmp.listIterator();
             while(i < tmp.size()){
                 if (i == 0){
@@ -231,11 +233,13 @@ public class BoEngine {
                 } else if (i != 0){
                     tmp2 = tmp.get(i).toString();
                     String[] thedata = dbms.SplitString(tmp2);
-                    int lid = Integer.parseInt(thedata[0]);
-                    int harga = Integer.parseInt(thedata[7]);
-                    int berat = Integer.parseInt(thedata[8]);
-                    Order order = new Order(lid,thedata[1],thedata[2],thedata[3],thedata[4],thedata[5],thedata[6],harga, berat, thedata[9]);
-                    data.add(order);
+                    if (thedata[10].startsWith("Selesai")){
+                        int lid = Integer.parseInt(thedata[0]);
+                        int harga = Integer.parseInt(thedata[7]);
+                        int berat = Integer.parseInt(thedata[8]);
+                        Order order = new Order(lid,thedata[1],thedata[2],thedata[3],thedata[4],thedata[5],thedata[6],harga, berat, thedata[9], thedata[10]);
+                        data.add(order);
+                    }
                 }
                 i++;
             }
@@ -250,7 +254,8 @@ public class BoEngine {
     
     public int GenerateLID(){
         Random rand = new Random();
-        int randomNum = rand.nextInt((1000 - 1) + 1) + 1;
+        Date a = new Date();
+        int randomNum = rand.nextInt((900 - 1) + 1) + a.getMinutes();
         return randomNum;
     }
 }

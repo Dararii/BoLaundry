@@ -66,7 +66,7 @@ public class DBManagement {
                             konten1.getAlamat() + "|" + konten1.getNomorHP() + "|" +
                             konten1.getJenisCucian() + "|" + konten1.getTglAmbil()+ "|" + konten1.getTglAntar() +
                             "|" + Integer.toString(konten1.getHarga()) + "|" + Integer.toString(konten1.getBerat()) + "|" +
-                            konten1.getPesan();
+                            konten1.getPesan()+ "|" + konten1.getStatus();
                     writer.println(tmp);
                 }
                 writer.close();
@@ -84,7 +84,7 @@ public class DBManagement {
                             konten1.getAlamat() + "|" + konten1.getNomorHP() + "|" +
                             konten1.getJenisCucian() + "|" + konten1.getTglAmbil() + "|" + konten1.getTglAntar() +
                             "|" + Integer.toString(konten1.getHarga()) + "|" + Integer.toString(konten1.getBerat()) + "|" +
-                            konten1.getPesan();
+                            konten1.getPesan() + "|" + konten1.getStatus();
                     writer.println(tmp);
                 }
                 writer.close();
