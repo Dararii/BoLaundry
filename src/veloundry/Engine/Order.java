@@ -14,30 +14,22 @@ public class Order {
     private SimpleIntegerProperty berat;
     private SimpleStringProperty tglAmbil;
     private SimpleStringProperty tglAntar;
+    private SimpleStringProperty pesan;
 
     public Order(){
         
     }
-    public Order(int lid, String nama, String alamat, String nomorHP, String jenisCucian, int harga, int berat, String tglAmbil, String tglAntar) {
+    public Order(int lid, String nama, String alamat, String nomorHP, String jenisCucian,String tglAmbil, String tglAntar, int harga, int berat, String pesan) {
         this.lid = new SimpleIntegerProperty(lid);
         this.nama = new SimpleStringProperty(nama);
         this.alamat = new SimpleStringProperty(alamat);
         this.nomorHP = new SimpleStringProperty(nomorHP);
         this.jenisCucian = new SimpleStringProperty(jenisCucian);
-        this.harga = new SimpleIntegerProperty(harga);
-        this.berat = new SimpleIntegerProperty(berat);
         this.tglAmbil = new SimpleStringProperty(tglAmbil);
         this.tglAntar = new SimpleStringProperty(tglAntar);
-    }
-
-    public Order(int lid, String nama, String alamat, String nomorHP, String jenisCucian, String tglAntar, int harga) {
-        this.lid = new SimpleIntegerProperty(lid);
-        this.nama = new SimpleStringProperty(nama);
-        this.alamat = new SimpleStringProperty(alamat);
-        this.nomorHP = new SimpleStringProperty(nomorHP);
-        this.jenisCucian = new SimpleStringProperty(jenisCucian);
-        this.tglAntar = new SimpleStringProperty(tglAntar);
         this.harga = new SimpleIntegerProperty(harga);
+        this.berat = new SimpleIntegerProperty(berat);
+        this.pesan = new SimpleStringProperty(pesan);
     }
     public Order(int lid, String nama, String alamat, String nomorHP, String jenisCucian, String tglAmbil, String tglAntar) {
         this.lid = new SimpleIntegerProperty(lid);
@@ -90,6 +82,14 @@ public class Order {
 
     public String getTglAntar() {
         return tglAntar.get();
+    }
+
+    public String getPesan() {
+        return pesan.get();
+    }
+
+    public void setPesan(String pesan) {
+        this.pesan = new SimpleStringProperty(pesan);
     }
     
 }

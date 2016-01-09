@@ -64,8 +64,9 @@ public class DBManagement {
                 for (Order konten1 : konten) {
                     String tmp = Integer.toString(konten1.getLid()) + "|" + konten1.getNama() + "|" +
                             konten1.getAlamat() + "|" + konten1.getNomorHP() + "|" +
-                            konten1.getJenisCucian() + "|" + konten1.getTglAntar() +
-                            "|" + Integer.toString(konten1.getHarga());
+                            konten1.getJenisCucian() + "|" + konten1.getTglAmbil()+ "|" + konten1.getTglAntar() +
+                            "|" + Integer.toString(konten1.getHarga()) + "|" + Integer.toString(konten1.getBerat()) + "|" +
+                            konten1.getPesan();
                     writer.println(tmp);
                 }
                 writer.close();
@@ -81,8 +82,9 @@ public class DBManagement {
                 for (Order konten1 : konten) {
                     String tmp = Integer.toString(konten1.getLid()) + "|" + konten1.getNama() + "|" +
                             konten1.getAlamat() + "|" + konten1.getNomorHP() + "|" +
-                            konten1.getJenisCucian() + "|" + konten1.getTglAntar() +
-                            "|" + Integer.toString(konten1.getHarga());
+                            konten1.getJenisCucian() + "|" + konten1.getTglAmbil() + "|" + konten1.getTglAntar() +
+                            "|" + Integer.toString(konten1.getHarga()) + "|" + Integer.toString(konten1.getBerat()) + "|" +
+                            konten1.getPesan();
                     writer.println(tmp);
                 }
                 writer.close();

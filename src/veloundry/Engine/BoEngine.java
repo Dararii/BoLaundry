@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.ListIterator;
 import java.util.Random;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.control.ProgressIndicator;
 
 /**@author Darari*/
 public class BoEngine {
@@ -124,26 +123,26 @@ public class BoEngine {
     
     public int GetFileFromServer(String filename, String username){
         int a = 0;
-        if (filename.equalsIgnoreCase("Order.txt")){
-            if(con.CekInetConnection("http://albc.ucoz.com")){
-                a = 1;
-                if(con.DownloadFile("http://albc.ucoz.com/" + username + "/Order.txt", "Order.txt")){
-                    a = 2;
-                }
-                else{
-                    if (con.getMessage().equalsIgnoreCase("File Not Found")){
-                        if (this.dbms.CheckFileExist("Order.txt") == true){
-                            
-                        }
-                        else {
-                            String x = dateman.GetCurrentDate();
-                            this.dbms.TulisFile("Order.txt", x,true);
-                        }
-                        PutFileToServer("Order.txt", username);
+        //if (filename.equalsIgnoreCase("Order.txt")){
+        if(con.CekInetConnection("http://albc.ucoz.com")){
+            a = 1;
+            if(con.DownloadFile("http://albc.ucoz.com/" + username + "/" + filename, filename)){
+                a = 2;
+            }
+            else{
+                if (con.getMessage().equalsIgnoreCase("File Not Found")){
+                    if (this.dbms.CheckFileExist(filename) == true){
+
                     }
+                    else {
+                        String x = dateman.GetCurrentDate();
+                        this.dbms.TulisFile(filename, x,true);
+                    }
+                    PutFileToServer(filename, username);
                 }
             }
         }
+        //}
         return a;
     }
     
@@ -202,8 +201,40 @@ public class BoEngine {
                     tmp2 = tmp.get(i).toString();
                     String[] thedata = dbms.SplitString(tmp2);
                     int lid = Integer.parseInt(thedata[0]);
-                    int harga = Integer.parseInt(thedata[6]);
-                    Order order = new Order(lid,thedata[1],thedata[2],thedata[3],thedata[4],thedata[5],harga);
+                    int harga = Integer.parseInt(thedata[7]);
+                    int berat = Integer.parseInt(thedata[8]);
+                    Order order = new Order(lid,thedata[1],thedata[2],thedata[3],thedata[4],thedata[5],thedata[6],harga, berat, thedata[9]);
+                    data.add(order);
+                }
+                i++;
+            }
+            this.currentState = true;
+        } catch(Exception e){
+            this.currentState = false;
+            e.printStackTrace();
+            setMessage(e.getMessage());
+        }
+        return data;
+    }
+    
+    public ArrayList<Order> GetCompletedOrder(){
+        ArrayList<Order> data = new ArrayList();
+        int i = 0;
+        try{
+            ArrayList tmp = new ArrayList();
+            String tmp2;
+            tmp = dbms.BacaFile("order_done.txt");
+            ListIterator iter = tmp.listIterator();
+            while(i < tmp.size()){
+                if (i == 0){
+                    setCurrentFileDate(tmp.get(i).toString());
+                } else if (i != 0){
+                    tmp2 = tmp.get(i).toString();
+                    String[] thedata = dbms.SplitString(tmp2);
+                    int lid = Integer.parseInt(thedata[0]);
+                    int harga = Integer.parseInt(thedata[7]);
+                    int berat = Integer.parseInt(thedata[8]);
+                    Order order = new Order(lid,thedata[1],thedata[2],thedata[3],thedata[4],thedata[5],thedata[6],harga, berat, thedata[9]);
                     data.add(order);
                 }
                 i++;

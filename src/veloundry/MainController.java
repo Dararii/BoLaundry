@@ -8,16 +8,13 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -28,7 +25,6 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
@@ -152,6 +148,8 @@ public class MainController implements Initializable {
     private ArrayList arraydatakonfirm;
     private ObservableList<Order> data;
     private ObservableList<Order> datakonfirm;
+    private ArrayList arraydatacomplete;
+    private ObservableList<Order> datacomplete;
     
     private SimpleDoubleProperty prop = new SimpleDoubleProperty(0);
     private boolean isAdmin = false;
@@ -170,10 +168,12 @@ public class MainController implements Initializable {
         //btntest.setContentDisplay(ContentDisplay.TOP);
         txtName.addEventFilter(KeyEvent.KEY_TYPED, letter_Validation(32));
         txtHP.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(12));
+        txtHarga.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
+        txtBerat.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(2));
         
         ObservableList<String> items =FXCollections.observableArrayList (
-        "Nama (LID)", "Alamat", "Jenis Cucian", "Berat Cucian", "Tanggal Ambil",
-                "Tanggal Antar", "Harga");
+        "Nama (LID)", "Alamat", "Jenis Cucian", "Tanggal Ambil",
+                "Tanggal Antar", "Berat Cucian", "Harga", "Catatan");
         ObservableList<String> jenisCuci = FXCollections.observableArrayList(
         "Cuci Basah", "Cuci Kering", "Cuci Setrika", "Cuci Boneka", 
                 "Cuci Gorden/Sprei");
@@ -216,12 +216,15 @@ public class MainController implements Initializable {
             }
         }
         
-        if (this.dbms.CheckFileExist("order_acc.txt") == true){
-            this.userpass = this.dbms.BacaFile("order_acc.txt");
-        }
-        else {
-            String a = dateman.GetCurrentDate();
-            this.dbms.TulisFile("order_acc.txt", a,true);
+        z = this.useEngine.GetFileFromServer("order_acc.txt", "Darari");
+        if (z != 2){
+            if (this.dbms.CheckFileExist("order_acc.txt") == true){
+                //this.userpass = this.dbms.BacaFile("order_acc.txt");
+            }
+            else {
+                String a = dateman.GetCurrentDate();
+                this.dbms.TulisFile("order_acc.txt", a,true);
+            }
         }
     }
     
@@ -244,10 +247,11 @@ public class MainController implements Initializable {
             arraydatamentah = this.dbms.BacaFile("Order.txt");
             arraydata = useEngine.GetNewOrder();
             data = FXCollections.observableArrayList(arraydata);
-            
             UpdateTable(TabelNewOrder, data);
-            //ArrayList<Order> aaaa = useEngine.GetNewOrder();
-            //ShowDialog("aa",Integer.toString(data.get(0).getLid()) ,AlertType.INFORMATION);
+        } else if (b == 1){
+            arraydatakonfirm = useEngine.GetConfirmedOrder();
+            datakonfirm = FXCollections.observableArrayList(arraydatakonfirm);
+            UpdateTableKonfirm(this.TabelKonfirmedOrder, datakonfirm);
         }
     }
     public void btnSendClick(){
@@ -350,19 +354,22 @@ public class MainController implements Initializable {
             String strAlamat = data.get(TabelNewOrder.getSelectionModel().getSelectedIndex()).getAlamat();
             String strHP = data.get(TabelNewOrder.getSelectionModel().getSelectedIndex()).getNomorHP();
             String strTglAntar = data.get(TabelNewOrder.getSelectionModel().getSelectedIndex()).getTglAntar();
+            String strTglAmbil = data.get(TabelNewOrder.getSelectionModel().getSelectedIndex()).getTglAmbil();
             String strJenis = data.get(TabelNewOrder.getSelectionModel().getSelectedIndex()).getJenisCucian();
             int intharga;
-            String strPesan;
+            String strPesan = "";
             if(!txtPesan.getText().isEmpty()){
                 strPesan = txtPesan.getText();
                 String toWrite = Integer.toString(intlid) + "|" + strPesan;
-                dbms.TulisFile("pesan", toWrite, false);
+                //dbms.TulisFile("pesan", toWrite, false);
             }
             try{
+                int p0 = useEngine.GetFileFromServer("Order.txt", "Darari");
+                int p1 = useEngine.GetFileFromServer("order_acc.txt", "Darari");
                 arraydatakonfirm = useEngine.GetConfirmedOrder();
                 datakonfirm = FXCollections.observableArrayList(arraydatakonfirm);
-                datakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis, strTglAntar, 0));
-                arraydatakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis, strTglAntar, 0));
+                datakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, 0, 0, strPesan));
+                arraydatakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, 0, 0, strPesan));
                 arraydata.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
                 arraydatamentah.remove(0);
                 arraydatamentah.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
@@ -373,11 +380,59 @@ public class MainController implements Initializable {
                 dbms.TulisFile("order_acc.txt", datakonfirm, false);
                 dbms.TulisFile("Order.txt", dateman.GetCurrentDate(), true);
                 dbms.TulisFile("Order.txt", arraydatamentah, false);
+                boolean p2 = useEngine.PutFileToServer("order_acc.txt", "Darari");
+                boolean p3 = useEngine.PutFileToServer("Order.txt", "Darari");
+                if (p0 != 2 || p1 != 2 || !p2 || !p3){
+                    ShowDialog("Error", "Oopss !! Something Wrong in Connection : " + this.useEngine.getMessage(),AlertType.ERROR);
+                }
                 if (!this.useEngine.isCurrentState()) {
                     ShowDialog("Error", "Error Message : " + this.useEngine.getMessage(),AlertType.ERROR);
                 }
             } catch(Exception e){
-                ShowDialog("Error", "Error : " + Integer.toString(TabelNewOrder.getSelectionModel().getSelectedIndex()),AlertType.ERROR);
+                ShowDialog("Error", "Error : " + e.getMessage(),AlertType.ERROR);
+            }
+        }
+    }
+    
+    public void UpdateHarga(){
+        if(TabelKonfirmedOrder.getSelectionModel().isEmpty()){
+            ShowDialog("Information", "Tolong pilih salah satu order", AlertType.INFORMATION);
+        }else{
+            int intlid = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getLid();
+            String strName = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getNama();
+            String strAlamat = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getAlamat();
+            String strHP = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getNomorHP();
+            String strTglAntar = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getTglAntar();
+            String strJenis = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getJenisCucian();
+            String strTglAmbil = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getTglAmbil();
+            String strPesan = datakonfirm.get(TabelKonfirmedOrder.getSelectionModel().getSelectedIndex()).getPesan();
+            int intharga;
+            int intberat;
+            try{
+                if ((this.txtHarga.getText() == null || this.txtHarga.getText().trim().isEmpty()) || 
+                        (this.txtBerat.getText() == null || this.txtBerat.getText().trim().isEmpty())){
+                    ShowDialog("Information", "Tolong isi Harga dan berat untuk update harga", AlertType.INFORMATION);
+                }
+                else{
+                    intharga = Integer.parseInt(this.txtHarga.getText());
+                    intberat = Integer.parseInt(this.txtBerat.getText());
+                    int indexi = TabelKonfirmedOrder.getSelectionModel().getSelectedIndex();
+                    datakonfirm.set(indexi, new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, intharga, intberat, strPesan));
+                    arraydatakonfirm.set(indexi, new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, intharga, intberat, strPesan));
+                    UpdateTableKonfirm(TabelKonfirmedOrder, datakonfirm);
+                    boolean p0 = dbms.TulisFile("order_acc.txt", dateman.GetCurrentDate(), true);
+                    boolean p1 = dbms.TulisFile("order_acc.txt", datakonfirm, false);
+                    boolean p2 = useEngine.PutFileToServer("order_acc.txt", "Darari");
+                    boolean p3 = useEngine.PutFileToServer("Order.txt", "Darari");
+                    if (!p0 || !p1 || !p2 || !p3){
+                        ShowDialog("Error", "Oopss !! Something Wrong in Connection or File Write : " + this.useEngine.getMessage(),AlertType.ERROR);
+                    }
+                    if (!this.useEngine.isCurrentState()) {
+                        ShowDialog("Error", "Error Message : " + this.useEngine.getMessage(),AlertType.ERROR);
+                    }
+                }
+            } catch(Exception e){
+                ShowDialog("Error", "Error : " + e.getMessage(),AlertType.ERROR);
             }
         }
     }
