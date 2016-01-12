@@ -20,7 +20,46 @@
             <Image url="@Icon/Backgorund.jpg" />
          </image>
       </ImageView>
-      <AnchorPane fx:id="apUserMain" layoutX="3.0" layoutY="94.0" prefHeight="383.0" prefWidth="645.0">
+      <AnchorPane fx:id="apLoading" layoutX="184.0" layoutY="164.0" prefHeight="200.0" prefWidth="312.0" visible="false">
+         <children>
+            <Label layoutX="44.0" layoutY="32.0" text="Application Preparation" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+            <ProgressIndicator fx:id="pbLoad" layoutX="133.0" layoutY="100.0" prefHeight="49.0" prefWidth="47.0" progress="0.0" />
+            <Label fx:id="lblLoadStat" alignment="CENTER" layoutX="32.0" layoutY="161.0" prefHeight="17.0" prefWidth="252.0" text="Status" textAlignment="CENTER" textFill="WHITE" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="apChooseLaundry" layoutX="155.0" layoutY="164.0" prefHeight="200.0" prefWidth="370.0" style="-fx-background-color: #ffffff;">
+         <children>
+            <ComboBox fx:id="cbPilihLaundry" layoutX="128.0" layoutY="58.0" prefHeight="25.0" prefWidth="210.0" promptText="Nama Penyedia Laundry" />
+            <Label layoutX="123.0" layoutY="14.0" text="Pilih Laundry">
+               <font>
+                  <Font name="System Bold" size="22.0" />
+               </font>
+            </Label>
+            <Label layoutX="27.0" layoutY="62.0" text="Nama Laundry">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="27.0" layoutY="100.0" text="Alamat Laundry">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="lblAlamatLau" layoutX="128.0" layoutY="100.0" prefHeight="17.0" prefWidth="210.0" text="-" />
+            <Label layoutX="27.0" layoutY="127.0" text="No. HP">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label fx:id="lblHPLaundry" layoutX="128.0" layoutY="127.0" prefHeight="17.0" prefWidth="210.0" text="-" />
+            <Button defaultButton="true" layoutX="273.0" layoutY="153.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="OK" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="apUserMain" layoutX="3.0" layoutY="94.0" prefHeight="383.0" prefWidth="645.0" visible="false">
          <children>
             <TabPane fx:id="tabMain" layoutX="-4.0" layoutY="-1.0" prefHeight="383.0" prefWidth="659.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="100.0" tabMaxWidth="90.0" tabMinHeight="100.0">
                <stylesheets>
@@ -482,7 +521,7 @@
             <Blend />
          </effect>
       </AnchorPane>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="83.0" layoutX="4.0" layoutY="375.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="100.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="83.0" layoutX="-10.0" layoutY="375.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="114.0" />
       <Label layoutX="6.0" layoutY="412.0" prefHeight="17.0" prefWidth="100.0" text="Copyright © 2015" wrapText="true" />
       <Label alignment="CENTER" contentDisplay="CENTER" layoutX="6.0" layoutY="430.0" prefHeight="17.0" prefWidth="100.0" text="By Essensift" textAlignment="CENTER" />
       <ImageView fitHeight="17.0" fitWidth="91.0" layoutX="11.0" layoutY="387.0" pickOnBounds="true" preserveRatio="true">
@@ -490,7 +529,7 @@
             <Image url="@Icon/elogo.png" />
          </image>
       </ImageView>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="76.0" layoutX="6.0" layoutY="383.0" onMouseClicked="#About_Click" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="100.0">
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="76.0" layoutX="5.0" layoutY="383.0" onMouseClicked="#About_Click" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="101.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
@@ -561,5 +600,10 @@
          </font>
       </Label>
       <Label fx:id="lblnotifstatus" layoutX="106.0" layoutY="76.0" prefHeight="17.0" prefWidth="252.0" text="Status :" textFill="WHITE" />
+      <Label fx:id="lblGantiLaundry" layoutX="474.0" layoutY="76.0" text="Ganti Laundry" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

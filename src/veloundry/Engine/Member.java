@@ -2,20 +2,55 @@ package veloundry.Engine;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 /**@author Darari*/
 public class Member {
-    private SimpleStringProperty name;
-    private SimpleStringProperty username;
-    private SimpleStringProperty password;
-    private SimpleIntegerProperty id;
-    private SimpleStringProperty alamat;
-    private SimpleStringProperty hp;
 
     private String Message;
     private String UserLogined;
+    
+    String tmpUser= null, tmpPass=null, admName=null, admPass=null;
+    String[] usernama = new String[1000];
+    String[] userpass = new String[1000];
+    String[] useralamat = new String[1000];
+    String[] userlaundryname = new String[1000];
+    String[] userhp = new String[1000];
+    private int UserIndex;
+    private DBManagement dbms = new DBManagement();
+
+    public int getUserIndex() {
+        return UserIndex;
+    }
+
+    public String[] getUseralamat() {
+        return useralamat;
+    }
+
+    public String[] getUserlaundryname() {
+        return userlaundryname;
+    }
+
+    public String[] getUserhp() {
+        return userhp;
+    }
+
+    public void setUserIndex(int UserIndex) {
+        this.UserIndex = UserIndex;
+    }
+
+    public String getUseralamat(int index) {
+        return useralamat[index];
+    }
+
+    public String getUserlaundryname(int index) {
+        return userlaundryname[index];
+    }
+
+    public String getUserhp(int index) {
+        return userhp[index];
+    }
+    
     
     public String getMessage() {
         return Message;
@@ -23,58 +58,6 @@ public class Member {
 
     public void setMessage(String Message) {
         this.Message = Message;
-    }
-    String tmpUser= null, tmpPass=null, admName=null, admPass=null;
-    String[] usernama = new String[1000];
-    String[] userpass = new String[1000];
-    private DBManagement dbms = new DBManagement();
-    
-    public SimpleStringProperty getName() {
-        return name;
-    }
-
-    public void setName(SimpleStringProperty name) {
-        this.name = name;
-    }
-
-    public SimpleStringProperty getUsername() {
-        return username;
-    }
-
-    public void setUsername(SimpleStringProperty username) {
-        this.username = username;
-    }
-
-    public SimpleStringProperty getPassword() {
-        return password;
-    }
-
-    public void setPassword(SimpleStringProperty password) {
-        this.password = password;
-    }
-
-    public SimpleIntegerProperty getId() {
-        return id;
-    }
-
-    public void setId(SimpleIntegerProperty id) {
-        this.id = id;
-    }
-
-    public SimpleStringProperty getAlamat() {
-        return alamat;
-    }
-
-    public void setAlamat(SimpleStringProperty alamat) {
-        this.alamat = alamat;
-    }
-
-    public SimpleStringProperty getHp() {
-        return hp;
-    }
-
-    public void setHp(SimpleStringProperty hp) {
-        this.hp = hp;
     }
 
     public boolean AdminLogin(String username, String pass, ArrayList data){
@@ -96,6 +79,7 @@ public class Member {
                     if (userpass[i].equals(this.tmpPass)){
                         UserLogined = usernama[i];
                         state = true;
+                        setUserIndex(i);
                         setMessage("Autentikasi Sukses");
                     } else {
                         setMessage("Password Salah");
@@ -113,17 +97,24 @@ public class Member {
         }
         return state;
     }
-    private void LoadData(ArrayList dbMember){
+    public void LoadData(ArrayList dbMember){
         int i = 0;
         String tmp;
         String[] tmpuserpass;
         ListIterator iter = dbMember.listIterator();
-        while(iter.hasNext()){
-            tmp = iter.next().toString();
-            tmpuserpass = dbms.SplitString(tmp);
-            this.usernama[i] = tmpuserpass[0];
-            this.userpass[i] = tmpuserpass[1];
-            i++;
+        try{
+            while(iter.hasNext()){
+                tmp = iter.next().toString();
+                tmpuserpass = dbms.SplitString(tmp);
+                this.usernama[i] = tmpuserpass[0];
+                this.userpass[i] = tmpuserpass[1];
+                this.userlaundryname[i] = tmpuserpass[2];
+                this.useralamat[i] = tmpuserpass[3];
+                this.userhp[i] = tmpuserpass[4];
+                i++;
+            }
+        } catch(Exception e){
+            setMessage(e.getMessage());
         }
     }
 }

@@ -12,14 +12,14 @@ import java.util.TimerTask;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -29,13 +29,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
@@ -62,6 +60,10 @@ public class MainController implements Initializable {
     private AnchorPane apAdminMain;
     @FXML
     private AnchorPane apLoginForm;
+    @FXML
+    private AnchorPane apLoading;
+    @FXML
+    private AnchorPane apChooseLaundry;
     @FXML
     private TextField txtHP;
     @FXML
@@ -106,6 +108,18 @@ public class MainController implements Initializable {
     private ComboBox cbJenisCucian;
     @FXML
     private ProgressIndicator pbOrder;
+    @FXML
+    private ProgressIndicator pbLoad;
+    @FXML
+    private Label lblLoadStat;
+    @FXML
+    private Label lblAlamatLau;
+    @FXML
+    private Label lblHPLaundry;
+    @FXML
+    private Label lblGantiLaundry;
+    @FXML
+    private ComboBox cbPilihLaundry;
     
     @FXML
     private TableView<Order> TabelNewOrder;
@@ -198,6 +212,7 @@ public class MainController implements Initializable {
     private SingleSelectionModel<Tab> selectionModel;
     private SingleSelectionModel<Tab> selectionModel1;
     private SingleSelectionModel<ComboBox> cbSM;
+    private SingleSelectionModel<ComboBox> cbSM1;
     private ArrayList arraydatamentah;
     private ArrayList arraydata;
     private ArrayList arraydatakonfirm;
@@ -205,9 +220,11 @@ public class MainController implements Initializable {
     private ObservableList<Order> datakonfirm;
     private ArrayList arraydatacomplete;
     private ObservableList<Order> datacomplete;
+    private ObservableList<String> temp;
     
     private SimpleDoubleProperty prop = new SimpleDoubleProperty(0);
     private boolean isAdmin = false;
+    private String adminName;
     private boolean isConnected = false;
     private ArrayList userpass = new ArrayList();
     
@@ -215,8 +232,12 @@ public class MainController implements Initializable {
     private final BoEngine useEngine = new BoEngine();
     private final DateManagement dateman = new DateManagement();
     private final DBManagement dbms = new DBManagement();
-    private Member member = new Member();
+    private final Member member = new Member();
     private final Timer timer = new java.util.Timer();
+    
+    private String[] alamat;
+    private String[] hp;
+    private String[] nama;
         
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -235,13 +256,10 @@ public class MainController implements Initializable {
         ObservableList<String> jenisCuci = FXCollections.observableArrayList(
         "Cuci Basah", "Cuci Kering", "Cuci Setrika", "Cuci Boneka", 
                 "Cuci Gorden/Sprei");
-        
-        cbJenisCucian.setItems(jenisCuci);
-        selectionModel = tabMain.getSelectionModel();
-        selectionModel1 = tabMain1.getSelectionModel();
-        cbSM = cbJenisCucian.getSelectionModel();
         pbOrder.progressProperty().bind(prop);
-        CekFileAtStart();
+        cbJenisCucian.setItems(jenisCuci);
+        
+        ApplicationPrepare();
         
         timer.schedule(new TimerTask() {
             public void run() {
@@ -254,16 +272,87 @@ public class MainController implements Initializable {
             }
         }, 0, 15000);
     }
-
+    
+    public void ApplicationPrepare(){
+        final Task task;
+        this.apLoading.setVisible(true);
+        task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try{
+                    updateProgress(0.2, 1);
+                    updateMessage("Building UI");
+                    selectionModel = tabMain.getSelectionModel();
+                    selectionModel1 = tabMain1.getSelectionModel();
+                    cbSM = cbJenisCucian.getSelectionModel();
+                    Thread.sleep(2000);
+                    updateProgress(0.5, 1);
+                    updateMessage("Checking File Environment");
+                    CekFileAtStart();
+                    Thread.sleep(1000);
+                    updateProgress(0.8, 1);
+                    updateMessage("Building Database");
+                    alamat = member.getUseralamat();
+                    hp = member.getUserhp();
+                    nama = member.getUserlaundryname();
+                    ArrayList tmp = new ArrayList();
+                    int index = 0;
+                    for (int i = 0; i < nama.length;i++){
+                        if (nama[i] != null){
+                            tmp.add(nama[i]);
+                        }
+                    }
+                    temp = FXCollections.observableArrayList(tmp);
+                    cbPilihLaundry.setItems(temp);
+                    Thread.sleep(1000);
+                    updateProgress(1, 1);
+                    updateMessage("Application Ready");
+                    Thread.sleep(2000);
+                    apLoading.setVisible(false);
+                    apUserMain.setVisible(false);
+                    apAdminMain.setVisible(false);
+                    apLoginForm.setVisible(false);
+                    apChooseLaundry.setVisible(true);
+                    FadeInAnimation(apChooseLaundry);
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                    updateMessage("Exception Error");
+                    return null;
+                }
+                return null;
+            }
+        };
+        this.pbLoad.progressProperty().bind(task.progressProperty());
+        this.lblLoadStat.textProperty().bind(task.messageProperty());
+        this.cbPilihLaundry.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> temp, String oldValue, String newValue) {
+                for (int i = 0; i< nama.length;i++){
+                    if (nama[i] != null){
+                        if (newValue.equalsIgnoreCase(nama[i])){
+                            lblHPLaundry.setText(hp[i]);
+                            lblAlamatLau.setText(alamat[i]);
+                        }
+                    }
+                }
+            }
+        });
+        new Thread(task).start();
+    }
     
     
     public void CekFileAtStart(){
+        
+        this.con.DownloadFile("http://albc.ucoz.com/user.txt", "user.txt");
         if (this.dbms.CheckFileExist("user.txt") == true){
             this.userpass = this.dbms.BacaFile("user.txt");
+            member.LoadData(this.userpass);
         }
         else {
-            this.dbms.TulisFile("user.txt", "",true);
+            this.dbms.TulisFile("user.txt", "Darari|indi|Bo Landry|Kunir No. 2|085749492249",true);
         }
+        
         
         int z = this.useEngine.GetFileFromServer("Order.txt", "Darari");
         if (z != 2){
@@ -427,7 +516,6 @@ public class MainController implements Initializable {
                     return null;
                 }
             };
-            //pbCekStat.setProgress(0);
             pbCekStat.progressProperty().bind(task.progressProperty());
             lblStatus.textProperty().bind(task.messageProperty());
             new Thread(task).start();
