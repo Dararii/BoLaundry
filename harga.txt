@@ -1,0 +1,4 @@
+Rp 5000/Kg
+Rp 7000/Kg
+Rp 9000/Kg
+Rp 20000/Item

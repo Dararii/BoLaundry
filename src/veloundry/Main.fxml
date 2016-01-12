@@ -112,7 +112,6 @@
                                     <Font name="System Italic" size="12.0" />
                                  </font>
                               </Label>
-                              <ProgressIndicator fx:id="pbOrder" layoutX="349.0" layoutY="250.0" progress="0.0" />
                               <TextField fx:id="txtAlamat" layoutX="126.0" layoutY="179.0" prefHeight="25.0" prefWidth="403.0" />
                            </children>
                         </AnchorPane>
@@ -328,6 +327,8 @@
                               </TableView>
                               <TextField fx:id="txtPesan" layoutX="75.0" layoutY="313.0" prefHeight="25.0" prefWidth="285.0" promptText="Tinggalkan pesan singkat" />
                               <Label layoutX="75.0" layoutY="347.0" text="* Jika terdapat sesuatu seperti masalah tepat waktu" />
+                              <Button layoutX="473.0" layoutY="85.0" mnemonicParsing="false" onAction="#RefreshListAdmin" text="Segarkan" />
+                              <ProgressIndicator fx:id="pbSegarkan" layoutX="441.0" layoutY="86.0" prefHeight="23.0" prefWidth="23.0" visible="false" />
                            </children>
                         </AnchorPane>
                      </content>
@@ -572,7 +573,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="36.0" layoutY="135.0" text="This Program built wiht Spirit of BO">
+                              <Label layoutX="36.0" layoutY="135.0" text="This Program built with Spirit of BO">
                                  <font>
                                     <Font name="System Bold Italic" size="12.0" />
                                  </font>
@@ -589,11 +590,11 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <Label layoutX="35.0" layoutY="25.0" prefHeight="24.0" prefWidth="464.0" text="This program is closed source and protected by Indonesian Law of Digital Copyrigth" />
+                              <Label layoutX="35.0" layoutY="25.0" prefHeight="24.0" prefWidth="509.0" text="This program is closed source and protected by Indonesian Law of digital copyright (HAKI)" />
                               <Label layoutX="35.0" layoutY="49.0" text="This program is freeware and can be used by everyone" />
                               <Label layoutX="35.0" layoutY="66.0" text="This program is under Essensift Freeware License" />
                               <Label layoutX="35.0" layoutY="83.0" text="There is no OpenSource code with GNU License used by this program version" />
-                              <Label layoutX="35.0" layoutY="128.0" text="Any question and recommendtion ? email me at founder@essensift.com">
+                              <Label layoutX="35.0" layoutY="128.0" text="Any question and recommendation ? email me at founder@essensift.com">
                                  <font>
                                     <Font name="System Bold" size="12.0" />
                                  </font>

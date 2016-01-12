@@ -1,4 +1,5 @@
-06/01/2016 01:47
-862|Sosoe|KOKOKOKO|909090|Cuci Setrika|03/01/2016 17:00|0
-81|Soe|akukuku|009090|Cuci Kering|14/01/2016 17:03|0
-82|Soe|akukuku|009090|Cuci Kering|06/01/2016 01:46|0
+12/01/2016 22:20
+821|indoooooool|KOKOKOKO|949090|Cuci Setrika|06/01/2016 01:44|06/01/2016 01:46|0|0|jual|Dikonfirmasi
+359|hahaha|iuiuiuiuiui|9090898|Cuci Kering|10/01/2016 13:25|11/01/2016 13:25|12000|3|kopaja|Sedang Dicuci
+832|Irfan Sal|alamat|9000000000|Cuci Kering|10/01/2016 13:10|11/01/2016 13:10|10000|3|kokoko|Selesai - Proses Pengantaran
+188|Indool Ndi|wono|90909090|Cuci Kering|10/01/2016 13:24|11/01/2016 13:24|15000|4|kokokoppp|Selesai - Proses Pengantaran

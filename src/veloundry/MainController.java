@@ -108,9 +108,9 @@ public class MainController implements Initializable {
     @FXML
     private ComboBox cbJenisCucian;
     @FXML
-    private ProgressIndicator pbOrder;
-    @FXML
     private ProgressIndicator pbLoad;
+    @FXML
+    private ProgressIndicator pbSegarkan;
     @FXML
     private Label lblLoadStat;
     @FXML
@@ -237,6 +237,8 @@ public class MainController implements Initializable {
     private String laundryName;
     private int laundryIndex = -1;
     private boolean isConnected = false;
+    private boolean test1 = false;
+    private boolean test2 = false;
     private ArrayList userpass = new ArrayList();
     
     private final Connection con = new Connection();
@@ -260,7 +262,6 @@ public class MainController implements Initializable {
         txtHP.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(12));
         txtHarga.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
         txtBerat.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(2));
-        this.txtPesan.addEventFilter(KeyEvent.KEY_TYPED, letter_Validation(100));
         this.txtHargaBasah.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
         this.txtHargaKering.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
         this.txtHargaSetrika.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
@@ -270,7 +271,6 @@ public class MainController implements Initializable {
         ObservableList<String> jenisCuci = FXCollections.observableArrayList(
         "Cuci Basah", "Cuci Kering", "Cuci Setrika", "Cuci Boneka", 
                 "Cuci Gorden/Sprei");
-        pbOrder.progressProperty().bind(prop);
         cbJenisCucian.setItems(jenisCuci);
         
         ApplicationPrepare();
@@ -427,6 +427,25 @@ public class MainController implements Initializable {
         }
     }
     
+    public void RefreshListAdmin(){
+        final Task task;
+        task = new Task<Void>(){
+            @Override
+            protected Void call() throws Exception {
+                try{
+                    pbSegarkan.setVisible(true);
+                    GetDBindividu();
+                    TabChanged();
+                    pbSegarkan.setVisible(false);
+                } catch(Exception e) {
+                    e.printStackTrace(System.out);
+                }
+                return null;
+            }
+        };
+        new Thread(task).start();
+    }
+    
     private void GetDBindividu(){
         int z = this.useEngine.GetFileFromServer("Order.txt", this.adminName);
         if (z != 2){
@@ -568,6 +587,8 @@ public class MainController implements Initializable {
     
     public void CekMyLaundry(){
         final Task task;
+        lvStatus.getItems().clear();
+        lvStatus.getSelectionModel().clearSelection();
         if ((this.idLaundry.getText() == null || this.idLaundry.getText().trim().isEmpty())){
             ShowDialog("Info", "Tolong Masukkan Code Laundry Anda !", AlertType.INFORMATION);
             pbCekStat.setProgress(0);
@@ -778,6 +799,7 @@ public class MainController implements Initializable {
     }
     
     public void KonfirmOrder(){
+        final Task task;
         if(TabelNewOrder.getSelectionModel().isEmpty()){
             ShowDialog("Information", "Tolong pilih salah satu order", AlertType.INFORMATION);
         }else{
@@ -797,24 +819,34 @@ public class MainController implements Initializable {
             try{
                 int p0 = useEngine.GetFileFromServer("Order.txt", this.adminName);
                 int p1 = useEngine.GetFileFromServer("order_acc.txt", this.adminName);
-                arraydatakonfirm = useEngine.GetConfirmedOrder();
-                datakonfirm = FXCollections.observableArrayList(arraydatakonfirm);
-                datakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, 0, 0, strPesan, strStatus));
-                arraydatakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, 0, 0, strPesan, strStatus));
-                arraydata.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
-                arraydatamentah.remove(0);
-                arraydatamentah.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
-                data.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
-                UpdateTableKonfirm(TabelKonfirmedOrder, datakonfirm);
-                UpdateTable(TabelNewOrder, data);
-                dbms.TulisFile("order_acc.txt", dateman.GetCurrentDate(), true);
-                dbms.TulisFile("order_acc.txt", datakonfirm, false);
-                boolean p4 = dbms.TulisFile("order_acc.txt", datacomplete, false);
-                dbms.TulisFile("Order.txt", dateman.GetCurrentDate(), true);
-                dbms.TulisFile("Order.txt", arraydatamentah, false);
-                boolean p2 = useEngine.PutFileToServer("order_acc.txt", this.adminName);
-                boolean p3 = useEngine.PutFileToServer("Order.txt", this.adminName);
-                if (p0 != 2 || p1 != 2 || !p2 || !p3 || !p4){
+                if (p0 == 2 && p1 == 2){
+                    arraydatakonfirm = useEngine.GetConfirmedOrder();
+                    datakonfirm = FXCollections.observableArrayList(arraydatakonfirm);
+                    datakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, 0, 0, strPesan, strStatus));
+                    arraydatakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, 0, 0, strPesan, strStatus));
+                    arraydata.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
+                    arraydatamentah.remove(0);
+                    arraydatamentah.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
+                    data.remove(TabelNewOrder.getSelectionModel().getSelectedIndex());
+                    UpdateTableKonfirm(TabelKonfirmedOrder, datakonfirm);
+                    UpdateTable(TabelNewOrder, data);
+                    dbms.TulisFile("order_acc.txt", dateman.GetCurrentDate(), true);
+                    dbms.TulisFile("order_acc.txt", datakonfirm, false);
+                    boolean p4 = dbms.TulisFile("order_acc.txt", datacomplete, false);
+                    dbms.TulisFile("Order.txt", dateman.GetCurrentDate(), true);
+                    dbms.TulisFile("Order.txt", arraydatamentah, false);
+                    test1 = test2 = false;
+                    task = new Task<Void>(){
+                        @Override
+                        protected Void call() throws Exception {
+                            test1 = useEngine.PutFileToServer("order_acc.txt", adminName);
+                            test2 = useEngine.PutFileToServer("Order.txt", adminName);
+                            return null;
+                        }
+                    };
+                    new Thread(task).start();
+                }
+                else if (p0 != 2 || p1 != 2){
                     ShowDialog("Error", "Oopss !! Something Wrong in Connection : " + this.useEngine.getMessage(),AlertType.ERROR);
                 }
                 if (!this.useEngine.isCurrentState()) {
@@ -827,6 +859,7 @@ public class MainController implements Initializable {
     }
     
     public void UpdateHarga(){
+        final Task task;
         if(TabelKonfirmedOrder.getSelectionModel().isEmpty()){
             ShowDialog("Information", "Tolong pilih salah satu order", AlertType.INFORMATION);
         }else{
@@ -856,9 +889,17 @@ public class MainController implements Initializable {
                     boolean p0 = dbms.TulisFile("order_acc.txt", dateman.GetCurrentDate(), true);
                     boolean p1 = dbms.TulisFile("order_acc.txt", datakonfirm, false);
                     boolean p4 = dbms.TulisFile("order_acc.txt", datacomplete, false);
-                    boolean p2 = useEngine.PutFileToServer("order_acc.txt", this.adminName);
-                    boolean p3 = useEngine.PutFileToServer("Order.txt", this.adminName);
-                    if (!p0 || !p1 || !p2 || !p3 || !p4){
+                    test1 = test2 = false;
+                    task = new Task<Void>(){
+                        @Override
+                        protected Void call() throws Exception {
+                            test1 = useEngine.PutFileToServer("order_acc.txt", adminName);
+                            test2 = useEngine.PutFileToServer("Order.txt", adminName);
+                            return null;
+                        }
+                    };
+                    new Thread(task).start();
+                    if (!p0 || !p1 || !p4){
                         ShowDialog("Error", "Oopss !! Something Wrong in Connection or File Write : " + this.useEngine.getMessage(),AlertType.ERROR);
                     }
                     if (!this.useEngine.isCurrentState()) {
@@ -872,6 +913,7 @@ public class MainController implements Initializable {
     }
     
     public void ProsesPengantaran(){
+        final Task task;
         if(TabelKonfirmedOrder.getSelectionModel().isEmpty()){
             ShowDialog("Information", "Tolong pilih salah satu order", AlertType.INFORMATION);
         }else{
@@ -902,9 +944,17 @@ public class MainController implements Initializable {
                     boolean p0 = dbms.TulisFile("order_acc.txt", dateman.GetCurrentDate(), true);
                     boolean p1 = dbms.TulisFile("order_acc.txt", datakonfirm, false);
                     boolean p4 = dbms.TulisFile("order_acc.txt", datacomplete, false);
-                    boolean p2 = useEngine.PutFileToServer("order_acc.txt", this.adminName);
-                    boolean p3 = useEngine.PutFileToServer("Order.txt", this.adminName);
-                    if (!p0 || !p1 || !p2 || !p3 || !p4){
+                    test1 = test2 = false;
+                    task = new Task<Void>(){
+                        @Override
+                        protected Void call() throws Exception {
+                            test1 = useEngine.PutFileToServer("order_acc.txt", adminName);
+                            test2 = useEngine.PutFileToServer("Order.txt", adminName);
+                            return null;
+                        }
+                    };
+                    new Thread(task).start();
+                    if (!p0 || !p1 || !p4){
                         ShowDialog("Error", "Oopss !! Something Wrong in Connection or File Write : " + this.useEngine.getMessage(),AlertType.ERROR);
                     }
                     if (!this.useEngine.isCurrentState()) {
@@ -1000,7 +1050,8 @@ public class MainController implements Initializable {
                 if (txt_TextField.getText().length() >= max_Lengh) {                    
                     e.consume();
                 }
-                if(e.getCharacter().matches("[A-Za-z]") || e.getCharacter().matches(" ")){ 
+                if(e.getCharacter().matches("[A-Za-z]") || e.getCharacter().matches(" ") ||
+                        e.getCharacter().matches("'") || e.getCharacter().matches(",")){ 
                 }else{
                     e.consume();
                 }
