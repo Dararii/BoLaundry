@@ -1,5 +1,0 @@
-Kurang :
-- Date di header database ( write and read)
-- Rewrite new order and sync with server
-- Proses pengantaran
-- Pembukuan optional

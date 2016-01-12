@@ -431,7 +431,7 @@
                                           <TextField fx:id="txtHargaKering" layoutX="19.0" layoutY="222.0" prefHeight="25.0" prefWidth="131.0" />
                                           <TextField fx:id="txtHargaSetrika" layoutX="19.0" layoutY="269.0" prefHeight="25.0" prefWidth="131.0" />
                                           <TextField fx:id="txtHargaBoneka" layoutX="19.0" layoutY="312.0" prefHeight="25.0" prefWidth="131.0" />
-                                          <Button fx:id="btnSetHarga" layoutX="85.0" layoutY="342.0" mnemonicParsing="false" text="Set Harga" />
+                                          <Button fx:id="btnSetHarga" layoutX="85.0" layoutY="342.0" mnemonicParsing="false" onAction="#UpdatePatokanHarga" text="Set Harga" />
                                        </children>
                                     </AnchorPane>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -464,7 +464,10 @@
                                                 <Font name="System Bold" size="24.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="lblhsaldo" layoutX="167.0" layoutY="340.0" text="Label" />
+                                          <Label fx:id="lblhsaldo" layoutX="166.0" layoutY="334.0" text="Label">
+                                             <font>
+                                                <Font name="System Bold" size="20.0" />
+                                             </font></Label>
                                           <Label layoutX="128.0" layoutY="331.0" text="Rp">
                                              <font>
                                                 <Font name="System Bold Italic" size="25.0" />
@@ -505,7 +508,7 @@
             <Label layoutX="26.0" layoutY="91.0" text="Username" />
             <Label layoutX="26.0" layoutY="142.0" text="Password" />
             <PasswordField fx:id="txtUserPass" layoutX="95.0" layoutY="138.0" prefHeight="25.0" prefWidth="252.0" />
-            <Hyperlink layoutX="95.0" layoutY="183.0" text="Do not have an account ?" />
+            <Hyperlink layoutX="95.0" layoutY="183.0" onMouseClicked="#Register" text="Do not have an account ?" />
             <ImageView fitHeight="30.0" fitWidth="29.0" layoutX="4.0" layoutY="3.0" onMouseClicked="#BackFromLoginForm" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@Icon/back.png" />
@@ -559,7 +562,7 @@
                                  </font>
                               </Label>
                               <Label layoutX="113.0" layoutY="58.0" prefHeight="17.0" prefWidth="158.0" text="ver. 1.0.273 - The spirit of Bo" />
-                              <Label layoutX="113.0" layoutY="75.0" prefHeight="20.0" prefWidth="204.0" text="Copyright © 2015 by Essensift">
+                              <Label layoutX="113.0" layoutY="75.0" prefHeight="20.0" prefWidth="265.0" text="Copyright © 2015 - 2016 by Essensift">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -569,14 +572,32 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
+                              <Label layoutX="36.0" layoutY="135.0" text="This Program built wiht Spirit of BO">
+                                 <font>
+                                    <Font name="System Bold Italic" size="12.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="36.0" layoutY="160.0" text="Originally coded by Darari Nur Amali feat. Goestom Budianto">
+                                 <font>
+                                    <Font name="System Bold Italic" size="12.0" />
+                                 </font>
+                              </Label>
                            </children></AnchorPane>
                   </content>
                 </Tab>
-                <Tab text="OpenSource">
+                <Tab text="License">
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <Label layoutX="35.0" layoutY="25.0" prefHeight="24.0" prefWidth="378.0" text="There is no OpenSource code used in this program version." />
+                              <Label layoutX="35.0" layoutY="25.0" prefHeight="24.0" prefWidth="464.0" text="This program is closed source and protected by Indonesian Law of Digital Copyrigth" />
+                              <Label layoutX="35.0" layoutY="49.0" text="This program is freeware and can be used by everyone" />
+                              <Label layoutX="35.0" layoutY="66.0" text="This program is under Essensift Freeware License" />
+                              <Label layoutX="35.0" layoutY="83.0" text="There is no OpenSource code with GNU License used by this program version" />
+                              <Label layoutX="35.0" layoutY="128.0" text="Any question and recommendtion ? email me at founder@essensift.com">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Label>
                            </children></AnchorPane>
                   </content>
                 </Tab>

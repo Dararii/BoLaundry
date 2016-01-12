@@ -8,10 +8,10 @@ public class Member {
 
     private String Message;
     private String UserLogined;
-    private int hargabasah;
-    private int hargakering;
-    private int hargasetrika;
-    private int hargaboneka;
+    private String hargabasah;
+    private String hargakering;
+    private String hargasetrika;
+    private String hargaboneka;
     
     String tmpUser= null, tmpPass=null, admName=null, admPass=null;
     String[] usernama = new String[1000];
@@ -22,38 +22,39 @@ public class Member {
     private int UserIndex;
     private DBManagement dbms = new DBManagement();
 
-    public int getHargabasah() {
+    public String getHargabasah() {
         return hargabasah;
     }
 
-    public void setHargabasah(int hargabasah) {
+    public void setHargabasah(String hargabasah) {
         this.hargabasah = hargabasah;
     }
 
-    public int getHargakering() {
+    public String getHargakering() {
         return hargakering;
     }
 
-    public void setHargakering(int hargakering) {
+    public void setHargakering(String hargakering) {
         this.hargakering = hargakering;
     }
 
-    public int getHargasetrika() {
+    public String getHargasetrika() {
         return hargasetrika;
     }
 
-    public void setHargasetrika(int hargasetrika) {
+    public void setHargasetrika(String hargasetrika) {
         this.hargasetrika = hargasetrika;
     }
 
-    public int getHargaboneka() {
+    public String getHargaboneka() {
         return hargaboneka;
     }
 
-    public void setHargaboneka(int hargaboneka) {
+    public void setHargaboneka(String hargaboneka) {
         this.hargaboneka = hargaboneka;
     }
-
+    
+    
     
     public int getUserIndex() {
         return UserIndex;
@@ -98,6 +99,14 @@ public class Member {
 
     public void setMessage(String Message) {
         this.Message = Message;
+    }
+    
+    public void LoadHarga(){
+        ArrayList tmp = dbms.BacaFile("harga.txt");
+        this.hargabasah = tmp.get(0).toString();
+        this.hargakering = tmp.get(1).toString();
+        this.hargasetrika = tmp.get(2).toString();
+        this.hargaboneka = tmp.get(3).toString();
     }
 
     public boolean AdminLogin(String username, String pass, ArrayList data){

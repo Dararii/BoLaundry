@@ -409,6 +409,12 @@ public class MainController implements Initializable {
         FadeInAnimation(apChooseLaundry);
     }
     
+    public void Register(){
+        ShowDialog("Information Registration", "Segera daftarkan usaha laundry Anda untuk didukung oleh"
+                + " layanan BO Laundry !\nKirimkan data diri Anda serta rincian nama usaha Anda ke :\n"
+                + "-cs@essensift.com\n-Datang langsung ke Kantor kami di BME F-199 Surabaya.", AlertType.INFORMATION);
+    }
+    
     public void CekFileAtStart(){
         
         this.con.DownloadFile("http://albc.ucoz.com/user.txt", "user.txt");
@@ -443,6 +449,75 @@ public class MainController implements Initializable {
                 this.dbms.TulisFile("order_acc.txt", a,true);
             }
         }
+        
+        boolean xx = this.con.DownloadFile("http://albc.ucoz.com/" + this.adminName + "/harga.txt", "harga.txt");
+        if (!xx){
+            ArrayList a = new ArrayList();
+            a.add("Rp 2000/Kg");
+            a.add("Rp 2500/Kg");
+            a.add("Rp 3000/Kg");
+            a.add("Rp 10000/Item");
+            this.dbms.TulisFile("harga.txt", a,true);
+            member.LoadHarga();
+        } else {
+            member.LoadHarga();
+        }
+    }
+    
+    public void AddPromptUpdateHarga(){
+        txtHargaBasah.setPromptText(member.getHargabasah());
+        txtHargaKering.setPromptText(member.getHargakering());
+        txtHargaSetrika.setPromptText(member.getHargasetrika());
+        txtHargaBoneka.setPromptText(member.getHargaboneka());
+        lblhargakering.setText(member.getHargakering());
+        lblhargabasah.setText(member.getHargabasah());
+        lblhargasetrika.setText(member.getHargasetrika());
+        lblhargaboneka.setText(member.getHargaboneka());
+        lblhargaseprai.setText(member.getHargaboneka());
+    }
+    
+    public void UpdatePatokanHarga(){
+        String a, b, c, d, a1, a2, a3, a4;
+        a = member.getHargabasah();
+        b = member.getHargakering();
+        c = member.getHargasetrika();
+        d = member.getHargaboneka();
+        a1 = txtHargaBasah.getText();
+        a2 = txtHargaKering.getText();
+        a3 = txtHargaSetrika.getText();
+        a4 = txtHargaBoneka.getText();
+        if (!txtHargaBasah.getText().isEmpty()) a = "Rp " + a1 + "/Kg";
+        if (!txtHargaKering.getText().isEmpty()) b = "Rp " + a2 + "/Kg";
+        if (!txtHargaSetrika.getText().isEmpty()) c = "Rp " + a3 + "/Kg";
+        if (!txtHargaBoneka.getText().isEmpty()) d = "Rp " + a4 + "/Item";
+        member.setHargabasah(a);
+        member.setHargakering(b);
+        member.setHargasetrika(c);
+        member.setHargaboneka(d);
+        ArrayList v = new ArrayList();
+        v.add(a);
+        v.add(b);
+        v.add(c);
+        v.add(d);
+        dbms.TulisFile("harga.txt", v, true);
+        AddPromptUpdateHarga();
+        txtHargaBasah.clear();
+        txtHargaKering.clear();
+        txtHargaSetrika.clear();
+        txtHargaBoneka.clear();
+        final Task task;
+        task = new Task<Void>(){
+            @Override
+            protected Void call() throws Exception {
+                try{
+                    con.UploadFile("harga.txt", adminName + "/", "albc.ucoz.com", "dalbc", "darari15");
+                } catch(Exception e){
+                    ShowDialog("Error", "Error when Sync : " + e.getMessage(), AlertType.ERROR);
+                }
+                return null;
+            }           
+        };
+        new Thread(task).start();
     }
     
     public void About_Click(){
@@ -459,6 +534,9 @@ public class MainController implements Initializable {
             paneAbout.setVisible(false);
         } else {
             paneAbout.setVisible(true);
+        }
+        if (a == 2){
+            AddPromptUpdateHarga();
         }
         if (b == 0){
             arraydatamentah = this.dbms.BacaFile("Order.txt");
@@ -484,6 +562,7 @@ public class MainController implements Initializable {
             lblNamaLaundry.setText(laundryName);
             lblAlamatLaundry.setText(alamat[laundryIndex]);
             this.lblhsaldo.setText(Integer.toString(saldo));
+            AddPromptUpdateHarga();
         }
     }
     
