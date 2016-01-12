@@ -54,7 +54,6 @@ import veloundry.Engine.Order;
  * @author Darari
  */
 public class MainController implements Initializable {
-
     @FXML
     private AnchorPane apUserMain;
     @FXML
