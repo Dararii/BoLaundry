@@ -2,13 +2,16 @@ package veloundry.Engine;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
-import javafx.beans.property.SimpleStringProperty;
 
 /**@author Darari*/
 public class Member {
 
     private String Message;
     private String UserLogined;
+    private int hargabasah;
+    private int hargakering;
+    private int hargasetrika;
+    private int hargaboneka;
     
     String tmpUser= null, tmpPass=null, admName=null, admPass=null;
     String[] usernama = new String[1000];
@@ -19,6 +22,39 @@ public class Member {
     private int UserIndex;
     private DBManagement dbms = new DBManagement();
 
+    public int getHargabasah() {
+        return hargabasah;
+    }
+
+    public void setHargabasah(int hargabasah) {
+        this.hargabasah = hargabasah;
+    }
+
+    public int getHargakering() {
+        return hargakering;
+    }
+
+    public void setHargakering(int hargakering) {
+        this.hargakering = hargakering;
+    }
+
+    public int getHargasetrika() {
+        return hargasetrika;
+    }
+
+    public void setHargasetrika(int hargasetrika) {
+        this.hargasetrika = hargasetrika;
+    }
+
+    public int getHargaboneka() {
+        return hargaboneka;
+    }
+
+    public void setHargaboneka(int hargaboneka) {
+        this.hargaboneka = hargaboneka;
+    }
+
+    
     public int getUserIndex() {
         return UserIndex;
     }
@@ -33,6 +69,10 @@ public class Member {
 
     public String[] getUserhp() {
         return userhp;
+    }
+
+    public String getUsernama(int index) {
+        return usernama[index];
     }
 
     public void setUserIndex(int UserIndex) {

@@ -39,6 +39,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import veloundry.Engine.BoEngine;
 import veloundry.Engine.Connection;
@@ -120,6 +121,10 @@ public class MainController implements Initializable {
     private Label lblGantiLaundry;
     @FXML
     private ComboBox cbPilihLaundry;
+    @FXML
+    private Label lblTentang;
+    @FXML
+    private Rectangle rectTentang;
     
     @FXML
     private TableView<Order> TabelNewOrder;
@@ -200,7 +205,11 @@ public class MainController implements Initializable {
     @FXML
     private Label lblStatus;
     @FXML
+    private Label lblPartner;
+    @FXML
     private ProgressIndicator pbCekStat;
+    @FXML
+    private ProgressIndicator pbPilihAnim;
     @FXML
     private ListView<String> lvStatus;
     @FXML
@@ -225,6 +234,8 @@ public class MainController implements Initializable {
     private SimpleDoubleProperty prop = new SimpleDoubleProperty(0);
     private boolean isAdmin = false;
     private String adminName;
+    private String laundryName;
+    private int laundryIndex = -1;
     private boolean isConnected = false;
     private ArrayList userpass = new ArrayList();
     
@@ -241,7 +252,10 @@ public class MainController implements Initializable {
         
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //btntest.setContentDisplay(ContentDisplay.TOP);
+        lblGantiLaundry.setVisible(false);
+        lblLogin.setVisible(false);
+        lblTentang.setVisible(false);
+        rectTentang.setVisible(false);
         txtName.addEventFilter(KeyEvent.KEY_TYPED, letter_Validation(32));
         txtHP.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(12));
         txtHarga.addEventFilter(KeyEvent.KEY_TYPED, numeric_Validation(7));
@@ -285,7 +299,7 @@ public class MainController implements Initializable {
                     selectionModel = tabMain.getSelectionModel();
                     selectionModel1 = tabMain1.getSelectionModel();
                     cbSM = cbJenisCucian.getSelectionModel();
-                    Thread.sleep(2000);
+                    Thread.sleep(4000);
                     updateProgress(0.5, 1);
                     updateMessage("Checking File Environment");
                     CekFileAtStart();
@@ -333,6 +347,7 @@ public class MainController implements Initializable {
                         if (newValue.equalsIgnoreCase(nama[i])){
                             lblHPLaundry.setText(hp[i]);
                             lblAlamatLau.setText(alamat[i]);
+                            laundryIndex = i;
                         }
                     }
                 }
@@ -341,6 +356,58 @@ public class MainController implements Initializable {
         new Thread(task).start();
     }
     
+    public void ChooseLaundry(){
+        final Task task;
+        if (this.laundryIndex != -1){
+            task = new Task<Void>(){
+                @Override
+                protected Void call() throws Exception {
+                    try{
+                        pbPilihAnim.setVisible(true);
+                        laundryName = nama[laundryIndex];
+                        updateMessage(laundryName);
+                        adminName = member.getUsernama(laundryIndex);
+                        GetDBindividu();
+                        apLoading.setVisible(false);
+                        apAdminMain.setVisible(false);
+                        apLoginForm.setVisible(false);
+                        paneAbout.setVisible(false);
+                        apChooseLaundry.setVisible(false);
+                        pbPilihAnim.setVisible(false);
+                        lvStatus.getSelectionModel().clearSelection();
+                        lvStatus.getItems().clear();
+                        apUserMain.setVisible(true);
+                        FadeInAnimation(apUserMain);
+                        lblGantiLaundry.setVisible(true);
+                        lblLogin.setVisible(true);
+                        lblTentang.setVisible(true);
+                        rectTentang.setVisible(true);
+                    } catch(Exception e){
+                        
+                    }
+                    return null;
+                }
+            };
+            this.lblPartner.textProperty().bind(task.messageProperty());
+            new Thread(task).start();
+        }else {
+            ShowDialog("Info", "Tolong pilih layanan laundry dahulu", AlertType.INFORMATION);
+        }
+    }
+    
+    public void BackToChooseLaundry(){
+        apLoading.setVisible(false);
+        apUserMain.setVisible(false);
+        apAdminMain.setVisible(false);
+        apLoginForm.setVisible(false);
+        paneAbout.setVisible(false);
+        apChooseLaundry.setVisible(true);
+        lblGantiLaundry.setVisible(false);
+        lblLogin.setVisible(false);
+        lblTentang.setVisible(false);
+        rectTentang.setVisible(false);
+        FadeInAnimation(apChooseLaundry);
+    }
     
     public void CekFileAtStart(){
         
@@ -352,12 +419,13 @@ public class MainController implements Initializable {
         else {
             this.dbms.TulisFile("user.txt", "Darari|indi|Bo Landry|Kunir No. 2|085749492249",true);
         }
-        
-        
-        int z = this.useEngine.GetFileFromServer("Order.txt", "Darari");
+    }
+    
+    private void GetDBindividu(){
+        int z = this.useEngine.GetFileFromServer("Order.txt", this.adminName);
         if (z != 2){
             if (this.dbms.CheckFileExist("Order.txt") == true){
-                //this.userpass = this.dbms.BacaFile("order_acc.txt");
+
             }
             else {
                 String a = dateman.GetCurrentDate();
@@ -365,10 +433,10 @@ public class MainController implements Initializable {
             }
         }
         
-        z = this.useEngine.GetFileFromServer("order_acc.txt", "Darari");
+        z = this.useEngine.GetFileFromServer("order_acc.txt", this.adminName);
         if (z != 2){
             if (this.dbms.CheckFileExist("order_acc.txt") == true){
-                //this.userpass = this.dbms.BacaFile("order_acc.txt");
+
             }
             else {
                 String a = dateman.GetCurrentDate();
@@ -413,6 +481,8 @@ public class MainController implements Initializable {
             for (Order datacomplete1 : this.datacomplete) {
                 saldo += datacomplete1.getHarga();
             }
+            lblNamaLaundry.setText(laundryName);
+            lblAlamatLaundry.setText(alamat[laundryIndex]);
             this.lblhsaldo.setText(Integer.toString(saldo));
         }
     }
@@ -443,7 +513,7 @@ public class MainController implements Initializable {
                             updateProgress(0.3, 1);
                             updateMessage("Sinkronasi..");
                             Thread.sleep(900);
-                            int b = useEngine.GetFileFromServer("order_acc.txt", "Darari");
+                            int b = useEngine.GetFileFromServer("order_acc.txt", adminName);
                             if (b==2){
                                 Thread.sleep(1000);
                                 updateProgress(0.4, 1);
@@ -541,7 +611,7 @@ public class MainController implements Initializable {
                     ShowDialog("Information", "Tolong periksa lagi tanggal ambil dan antar", AlertType.INFORMATION);
                 } else{
                     boolean b;
-                    b = useEngine.AddNewOrder(nama, alamat, hp, jenis, dateman.CreateStringFormDate(date1), dateman.CreateStringFormDate(date2));
+                    b = useEngine.AddNewOrder(nama, alamat, hp, jenis, dateman.CreateStringFormDate(date1), dateman.CreateStringFormDate(date2), this.adminName);
                     if (b) {
                         ShowDialog("Information", useEngine.getMessage(), AlertType.INFORMATION);
                         ResetForm();
@@ -557,7 +627,7 @@ public class MainController implements Initializable {
                 c.add(Calendar.DATE, 1);
                 zz = c.getTime();
                 boolean b= false;
-                b = useEngine.AddNewOrder(nama, alamat, hp, jenis, dateman.GetCurrentDate(), dateman.CreateStringFormDate(zz));
+                b = useEngine.AddNewOrder(nama, alamat, hp, jenis, dateman.GetCurrentDate(), dateman.CreateStringFormDate(zz), this.adminName);
                 if (b) {
                     ShowDialog("Information", useEngine.getMessage(), AlertType.INFORMATION);
                     ResetForm();
@@ -574,19 +644,25 @@ public class MainController implements Initializable {
         String username, pass;
         username = txtUserName.getText();
         pass = txtUserPass.getText();
-        this.isAdmin = member.AdminLogin(username, pass, userpass);
-        if (this.isAdmin){
-            apAdminMain.setVisible(true);
-            apUserMain.setVisible(false);
-            apLoginForm.setVisible(false);
-            FadeInAnimation(apAdminMain);
-            lblLogin.setText("Keluar");
-            txtUserName.clear();
-            txtUserPass.clear();
-            selectionModel1.select(0);
-            TabChanged();
-        } else{
-            ShowDialog("Login Information", member.getMessage(),AlertType.INFORMATION);
+        if (this.adminName.equalsIgnoreCase(username)){
+            this.isAdmin = member.AdminLogin(username, pass, userpass);
+            if (this.isAdmin){
+                apAdminMain.setVisible(true);
+                apUserMain.setVisible(false);
+                apLoginForm.setVisible(false);
+                FadeInAnimation(apAdminMain);
+                lblLogin.setText("Keluar");
+                lblGantiLaundry.setVisible(false);
+                txtUserName.clear();
+                txtUserPass.clear();
+                selectionModel1.select(0);
+                TabChanged();
+            } else{
+                ShowDialog("Login Information", member.getMessage(),AlertType.INFORMATION);
+            }
+        } else {
+            ShowDialog("Login Information", "Username tidak sesuai dengan layanan laundry yang dipilih\n"
+                    + "Layanan Laundry saat ini : " + this.laundryName,AlertType.INFORMATION);
         }
     }
     public void ShowLoginForm(){
@@ -594,12 +670,17 @@ public class MainController implements Initializable {
         if(a.equalsIgnoreCase("keluar")){
             this.isAdmin = false;
             lblLogin.setText("Masuk");
+            lblGantiLaundry.setVisible(true);
             apAdminMain.setVisible(false);
+            apChooseLaundry.setVisible(false);
+            apLoading.setVisible(false);
             apUserMain.setVisible(true);
             FadeInAnimation(apUserMain);
             apLoginForm.setVisible(false);
         } else{
             paneAbout.setVisible(false);
+            apChooseLaundry.setVisible(false);
+            apLoading.setVisible(false);
             apAdminMain.setVisible(false);
             apUserMain.setVisible(false);
             apLoginForm.setVisible(true);
@@ -635,8 +716,8 @@ public class MainController implements Initializable {
                 strPesan = txtPesan.getText();
             }
             try{
-                int p0 = useEngine.GetFileFromServer("Order.txt", "Darari");
-                int p1 = useEngine.GetFileFromServer("order_acc.txt", "Darari");
+                int p0 = useEngine.GetFileFromServer("Order.txt", this.adminName);
+                int p1 = useEngine.GetFileFromServer("order_acc.txt", this.adminName);
                 arraydatakonfirm = useEngine.GetConfirmedOrder();
                 datakonfirm = FXCollections.observableArrayList(arraydatakonfirm);
                 datakonfirm.add(new Order(intlid, strName, strAlamat, strHP, strJenis,strTglAmbil, strTglAntar, 0, 0, strPesan, strStatus));
@@ -652,8 +733,8 @@ public class MainController implements Initializable {
                 boolean p4 = dbms.TulisFile("order_acc.txt", datacomplete, false);
                 dbms.TulisFile("Order.txt", dateman.GetCurrentDate(), true);
                 dbms.TulisFile("Order.txt", arraydatamentah, false);
-                boolean p2 = useEngine.PutFileToServer("order_acc.txt", "Darari");
-                boolean p3 = useEngine.PutFileToServer("Order.txt", "Darari");
+                boolean p2 = useEngine.PutFileToServer("order_acc.txt", this.adminName);
+                boolean p3 = useEngine.PutFileToServer("Order.txt", this.adminName);
                 if (p0 != 2 || p1 != 2 || !p2 || !p3 || !p4){
                     ShowDialog("Error", "Oopss !! Something Wrong in Connection : " + this.useEngine.getMessage(),AlertType.ERROR);
                 }
@@ -696,8 +777,8 @@ public class MainController implements Initializable {
                     boolean p0 = dbms.TulisFile("order_acc.txt", dateman.GetCurrentDate(), true);
                     boolean p1 = dbms.TulisFile("order_acc.txt", datakonfirm, false);
                     boolean p4 = dbms.TulisFile("order_acc.txt", datacomplete, false);
-                    boolean p2 = useEngine.PutFileToServer("order_acc.txt", "Darari");
-                    boolean p3 = useEngine.PutFileToServer("Order.txt", "Darari");
+                    boolean p2 = useEngine.PutFileToServer("order_acc.txt", this.adminName);
+                    boolean p3 = useEngine.PutFileToServer("Order.txt", this.adminName);
                     if (!p0 || !p1 || !p2 || !p3 || !p4){
                         ShowDialog("Error", "Oopss !! Something Wrong in Connection or File Write : " + this.useEngine.getMessage(),AlertType.ERROR);
                     }
@@ -742,8 +823,8 @@ public class MainController implements Initializable {
                     boolean p0 = dbms.TulisFile("order_acc.txt", dateman.GetCurrentDate(), true);
                     boolean p1 = dbms.TulisFile("order_acc.txt", datakonfirm, false);
                     boolean p4 = dbms.TulisFile("order_acc.txt", datacomplete, false);
-                    boolean p2 = useEngine.PutFileToServer("order_acc.txt", "Darari");
-                    boolean p3 = useEngine.PutFileToServer("Order.txt", "Darari");
+                    boolean p2 = useEngine.PutFileToServer("order_acc.txt", this.adminName);
+                    boolean p3 = useEngine.PutFileToServer("Order.txt", this.adminName);
                     if (!p0 || !p1 || !p2 || !p3 || !p4){
                         ShowDialog("Error", "Oopss !! Something Wrong in Connection or File Write : " + this.useEngine.getMessage(),AlertType.ERROR);
                     }

@@ -20,7 +20,7 @@
             <Image url="@Icon/Backgorund.jpg" />
          </image>
       </ImageView>
-      <AnchorPane fx:id="apLoading" layoutX="184.0" layoutY="164.0" prefHeight="200.0" prefWidth="312.0" visible="false">
+      <AnchorPane fx:id="apLoading" layoutX="184.0" layoutY="164.0" prefHeight="200.0" prefWidth="312.0">
          <children>
             <Label layoutX="44.0" layoutY="32.0" text="Application Preparation" textFill="WHITE">
                <font>
@@ -31,7 +31,7 @@
             <Label fx:id="lblLoadStat" alignment="CENTER" layoutX="32.0" layoutY="161.0" prefHeight="17.0" prefWidth="252.0" text="Status" textAlignment="CENTER" textFill="WHITE" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="apChooseLaundry" layoutX="155.0" layoutY="164.0" prefHeight="200.0" prefWidth="370.0" style="-fx-background-color: #ffffff;">
+      <AnchorPane fx:id="apChooseLaundry" layoutX="155.0" layoutY="164.0" prefHeight="200.0" prefWidth="370.0" style="-fx-background-color: #ffffff;" visible="false">
          <children>
             <ComboBox fx:id="cbPilihLaundry" layoutX="128.0" layoutY="58.0" prefHeight="25.0" prefWidth="210.0" promptText="Nama Penyedia Laundry" />
             <Label layoutX="123.0" layoutY="14.0" text="Pilih Laundry">
@@ -56,7 +56,8 @@
                </font>
             </Label>
             <Label fx:id="lblHPLaundry" layoutX="128.0" layoutY="127.0" prefHeight="17.0" prefWidth="210.0" text="-" />
-            <Button defaultButton="true" layoutX="273.0" layoutY="153.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="OK" />
+            <Button defaultButton="true" layoutX="273.0" layoutY="153.0" mnemonicParsing="false" onAction="#ChooseLaundry" prefHeight="25.0" prefWidth="67.0" text="OK" />
+            <ProgressIndicator fx:id="pbPilihAnim" layoutX="236.0" layoutY="153.0" prefHeight="25.0" prefWidth="23.0" visible="false" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="apUserMain" layoutX="3.0" layoutY="94.0" prefHeight="383.0" prefWidth="645.0" visible="false">
@@ -529,7 +530,7 @@
             <Image url="@Icon/elogo.png" />
          </image>
       </ImageView>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="76.0" layoutX="5.0" layoutY="383.0" onMouseClicked="#About_Click" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="101.0">
+      <Rectangle fx:id="rectTentang" arcHeight="5.0" arcWidth="5.0" fill="#ffffff00" height="76.0" layoutX="5.0" layoutY="383.0" onMouseClicked="#About_Click" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="101.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
@@ -583,7 +584,7 @@
             </TabPane>
          </children>
       </Pane>
-      <Label layoutX="610.0" layoutY="76.0" onMouseClicked="#About_Click" text="Tentang" textFill="WHITE">
+      <Label fx:id="lblTentang" layoutX="610.0" layoutY="76.0" onMouseClicked="#About_Click" text="Tentang" textFill="WHITE">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
@@ -600,10 +601,15 @@
          </font>
       </Label>
       <Label fx:id="lblnotifstatus" layoutX="106.0" layoutY="76.0" prefHeight="17.0" prefWidth="252.0" text="Status :" textFill="WHITE" />
-      <Label fx:id="lblGantiLaundry" layoutX="474.0" layoutY="76.0" text="Ganti Laundry" textFill="WHITE">
+      <Label fx:id="lblGantiLaundry" layoutX="422.0" layoutY="76.0" onMouseClicked="#BackToChooseLaundry" text="Ganti Layanan Laundry" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </Label>
+      <Label layoutX="238.0" layoutY="53.0" text="feat." />
+      <Label fx:id="lblPartner" layoutX="264.0" layoutY="53.0" text="Bo Laundry" />
    </children>
 </AnchorPane>

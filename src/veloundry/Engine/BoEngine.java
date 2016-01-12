@@ -54,14 +54,14 @@ public class BoEngine {
         return this.data;
     }
     
-    public boolean AddNewOrder(String name, String alamat, String hp, String JenisCucian, String date1, String date2){
+    public boolean AddNewOrder(String name, String alamat, String hp, String JenisCucian, String date1, String date2, String username){
         boolean state = false;
         ArrayList tmp;
         int LID = GenerateLID(); 
         try{
             setProp(0.15);
             String konten = Integer.toString(LID) + "|" + name + "|" + alamat + "|" + hp + "|" + JenisCucian + "|" + date1 + "|" + date2;
-            int c = GetFileFromServer("Order.txt", "Darari");
+            int c = GetFileFromServer("Order.txt", username);
             setProp(0.35);
             if (c == 2){
                 tmp = dbms.BacaFile("Order.txt");
@@ -71,7 +71,7 @@ public class BoEngine {
                 boolean b = dbms.TulisFile("Order.txt", tmp, true);
                 setProp(0.65);
                 if (b) {
-                    boolean d = con.UploadFile("Order.txt", "Darari/", "albc.ucoz.com", "dalbc", "darari15");
+                    boolean d = con.UploadFile("Order.txt", username + "/", "albc.ucoz.com", "dalbc", "darari15");
                     setProp(0.85);
                     if (d){
                         setProp(1);
